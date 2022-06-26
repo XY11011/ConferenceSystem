@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserMapper">
+    <!--  通过username查找用户-->
+    <select id="queryUserByUsername" parameterType="String" resultType="User">
+        select *
+        from user
+        where username = #{username};
+    </select>
+    <!--  添加用户-->
+    <insert id="addUser" parameterType="User">
+        insert into user(username, password, email,name,gender,birthday,education,city,institution)
+        values (#{username}, #{password}, #{email},#{name},#{gender},#{birthday},#{education},#{city},#{institution});
+    </insert>
+
+    <!--    更新用户个人信息-->
+    <update id="updateUserInfo" parameterType="User">
+        update user
+        set email=#{email},name=#{name},gender=#{gender},birthday=#{birthday},education=#{education},city=#{city},institution=#{institution}
+        where username = #{username}
+    </update>
+
+    <!--    更新用户密码-->
+    <update id="updateUserPwd" parameterType="User">
+        update user
+        set password=#{password}
+        where username = #{username}
+    </update>
+</mapper>

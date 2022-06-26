@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 2 | 起始页</title>
+    <!-- 告诉浏览器该页面是自适应布局 -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/font-awesome/css/font-awesome.min.css}"
+          href="/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/Ionicons/css/ionicons.min.css}"
+          href="/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/AdminLTE.min.css}" href="/adminLTE/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE 皮肤。默认使用蓝色皮肤。
+        您可以选择其他皮肤。皮肤样式写在 body 标签中，
+        以便使之生效。 -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/skins/_all-skins.min.css}"
+          href="/adminLTE/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+
+<body class="hold-transition skin-purple sidebar-mini">
+<div class="wrapper">
+
+    <!--------------------------------------------- 头部 ------------------------------------------>
+    <header class="main-header" th:fragment="main_header">
+
+        <!------------------ 左上角的LOGO ----------------->
+        <a href="#" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>会议管理</b></span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>会议管理系统</b></span>
+        </a>
+
+        <!----------------- 头部导航栏 ------------------>
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- 导航栏收缩按钮-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">切换导航</span>
+            </a>
+            <!-- 导航栏右侧菜单 -->
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <!-- User Account Menu -->
+                    <li class="dropdown user user-menu">
+                        <!-- Menu Toggle Button -->
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <!-- The user image in the navbar-->
+                            <img src="/adminLTE/dist/img/user_our.jpg" class="user-image" alt="用户图像">
+                            <!-- hidden-xs 在小型设备上隐藏用户名，只显示图像。 -->
+                            <span class="hidden-xs" th:text="${session.username}">Nick</span>
+                        </a>
+                        <!-- 点击头像的菜单 -->
+                        <ul class="dropdown-menu">
+                            <!-- The user image in the menu -->
+                            <li class="user-header">
+                                <img src="/adminLTE/dist/img/user_our.jpg" class="img-circle" alt="用户图像">
+
+                                <p>
+                                    [[${session.username}]]
+                                    <small>注册于2020年5月</small>
+                                </p>
+                            </li>
+
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" class="btn btn-default btn-flat">资料</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a th:href="@{/admin/logout}" class="btn btn-default btn-flat">退出</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- 最右侧的设置按钮 -->
+                    <!--<li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>-->
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-------------------------------------------- 左部侧边栏 ---------------------------------------------->
+    <aside class="main-sidebar" th:fragment="main_sidebar" id="main_sidebar">
+        <section class="sidebar">
+
+            <!--------- 用户状态面板 ----------->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img src="/adminLTE/dist/img/user_our.jpg" class="img-circle" alt="用户图像">
+                </div>
+                <div class="pull-left info">
+                    <!--<p th:text="${session.loginUser}">Nick</p>-->
+                    <!-- 状态 -->
+                    <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+                </div>
+            </div>
+
+            <!---------- 侧边栏搜索框 --------->
+            <!--<form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="搜索...">
+                    <span class="input-group-btn">
+                            <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i
+                                    class="fa fa-search"></i>
+                            </button>
+                        </span>
+                </div>
+            </form>-->
+
+            <!------------- 侧边栏菜单 ------------->
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header">主导航</li>
+                <!--------- 导航链接 ----------->
+                <li class="active" th:class="${activeUri=='home'?'active':''}"><a th:href="@{/admin/home}" href="/admin/home"><i class="fa fa-dashboard"></i> <span>首页</span></a></li>
+                <!--后端分页渲染-->
+                <li class="active" th:class="${activeUri=='conference_manage'?'active':''}"><a th:href="@{/admin/conference_manage}" href="/admin/conference_manage"><i class="fa fa-flag"></i> <span>会议管理</span></a></li>
+                <!--前端分页渲染-->
+                <li th:class="${activeUri=='reviewer_manage'?'active':''}"><a th:href="@{/admin/reviewer_manage}" href="/user/findAll"><i class="fa fa-user"></i> <span>审稿人管理</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-link"></i> <span>稿件管理</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li th:class="${activeUri=='paper_manage_undistri'?'active':''}"><a th:href="@{/admin/paper_manage_undistri}">未分配稿件</a></li>
+                        <li th:class="${activeUri=='paper_manage_distributed'?'active':''}"><a th:href="@{/admin/paper_manage_distributed}">已分配稿件</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+    </aside>
+
+    <!------------------------------------- 页面主体内容 -------------------------------------->
+    <div class="content-wrapper">
+        <!------- 头部 (页眉) ------->
+        <section class="content-header">
+            <h1>
+                首页
+                <small>欢迎您</small>
+            </h1>
+            <!-- 面包屑 -->
+            <ol class="breadcrumb">
+                <li><a th:href="@{/main.html}" href="/main.html"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li class="active">用户列表1</li>
+            </ol>
+        </section>
+
+        <!------ 主体内容 ------>
+        <section class="content container-fluid">
+            <!-- 面板样例 -->
+            <div class="box box-primary">
+                <!-- 面板头部 -->
+                <div class="box-header with-border">
+                    <i class="fa fa-cube"></i>
+                    <h3 class="box-title">面板样例</h3>
+                </div>
+                <!-- 面板内容 -->
+                <div class="box-body">
+                    <h1>这是一个AdminLTE模板！</h1>
+                    <h3>任何你想要的</h3>
+
+                </div>
+
+
+            </div>
+            <!-- /.box-body -->
+
+        </section>
+    </div>
+
+    <!------- 尾部Footer ------>
+    <footer class="main-footer" th:fragment="main_footer">
+        <!-- 右测内容 -->
+        <div class="pull-right hidden-xs">
+
+        </div>
+        <!-- 默认左侧内容 -->
+        <!--<strong>Copyright &copy; 2022 <a href="#">Company</a>.</strong> All rights reserved.-->
+        <strong>Copyright &copy </strong>Conference Manage System
+    </footer>
+
+    <!------------------------------------右侧设置按钮的侧边栏 ------------------------------------>
+    <aside class="control-sidebar control-sidebar-dark" style="display: none;" th:fragment="control_sidebar">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading">个人中心</h3>
+
+            </div>
+            <!-- /.tab-pane -->
+            <!-- Settings tab content -->
+            <div class="tab-pane" id="control-sidebar-settings-tab">
+                <h3 class="control-sidebar-heading">常规设置</h3>
+            </div>
+            <!-- /.tab-pane -->
+        </div>
+    </aside>
+    <!-- /.control-sidebar -->
+    <!-- 添加侧边栏的背景。这个 div必须放在 control-sidebar 之后 -->
+    <div class="control-sidebar-bg"></div>
+</div>
+
+
+<!--------------------------- 导入的 JS SCRIPTS ------------------------>
+<!-- jQuery 3 -->
+<script th:src="@{/adminLTE/bower_components/jquery/dist/jquery.min.js}"
+        src="/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js}"
+        src="/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/adminLTE/dist/js/adminlte.min.js}" src="/adminLTE/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script th:src="@{/adminLTE/dist/js/demo.js}" src="/adminLTE/dist/js/demo.js"></script>
+
+
+</body>
+
+</html>

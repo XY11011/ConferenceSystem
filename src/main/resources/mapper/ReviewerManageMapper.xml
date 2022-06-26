@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ReviewerManageMapper">
+    <!--搜索框搜索用户名查找审稿人信息-->
+    <select id="queryReviewerBySearchUsername" resultType="com.example.demo.pojo.Reviewer">
+        select * from reviewer where (username like concat('%', #{searchString}, '%'))
+    </select>
+    <!--添加审稿人信息-->
+    <insert id="createReviewer" parameterType="com.example.demo.pojo.Reviewer">
+        insert into reviewer(username,password,name,email) values(#{username},#{password},#{name},#{email})
+    </insert>
+    <!--根据审稿人ID查询审稿人信息-->
+    <select id="queryReviewerById" resultType="com.example.demo.pojo.Reviewer">
+        select * from reviewer where id = #{id}
+    </select>
+</mapper>

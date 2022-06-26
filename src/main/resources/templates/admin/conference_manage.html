@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>会议列表</title>
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/font-awesome/css/font-awesome.min.css}"
+          href="/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/plugins/timepicker/bootstrap-timepicker.min.css}">
+    <!-- daterange picker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.css}">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/Ionicons/css/ionicons.min.css}"
+          href="/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/AdminLTE.min.css}" href="/adminLTE/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE 皮肤。默认使用蓝色皮肤。
+        您可以选择其他皮肤。皮肤样式写在 body 标签中，
+        以便使之生效。 -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/skins/_all-skins.min.css}"
+          href="/adminLTE/dist/css/skins/_all-skins.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}" href="/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!--layui样式-->
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="/layui/css/layui.css">
+    <!--jqueryComfirm样式-->
+    <link th:href="@{/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.css}" href="/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.css" rel="stylesheet">
+
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini">
+<div class="wrapper">
+
+    <!--------------------------------------------- 头部 ------------------------------------------>
+    <!--引入抽取的AdminLTEdemo-->
+    <!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+    <div th:replace="admin/AdminLTEdemo::main_header"></div>
+
+    <!-------------------------------------------- 左部侧边栏 ---------------------------------------------->
+    <div th:replace="admin/AdminLTEdemo::#main_sidebar(activeUri='conference_manage')"></div>
+
+    <!------------------------------------- 页面主体内容 -------------------------------------->
+    <div class="content-wrapper">
+        <!------- 头部 (页眉) ------->
+        <section class="content-header">
+            <h1>
+                会议管理
+                <!--<small>欢迎您</small>-->
+            </h1>
+            <!-- 面包屑 -->
+            <ol class="breadcrumb">
+                <li><a href="/admin/home"><i class="fa fa-dashboard"></i>首页</a></li>
+                <li class="active">会议管理</li>
+            </ol>
+        </section>
+
+        <!------ 主体内容 ------>
+        <section class="content container-fluid">
+            <!-- .box-body -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">会议信息列表</h3>
+                </div>
+
+                <div class="box-body">
+
+                    <!-- 数据表格 -->
+                    <div class="table-box">
+
+                        <!--工具栏-->
+                        <div class="pull-left">
+                            <div class="form-group form-inline">
+                                <div class="btn-group">
+                                    <button type="button" id="btn_add" name="btn_add" class="btn layui-bg-blue"
+                                            title="新建" onclick="">
+                                        <i class="fa fa-file-o"></i> 新建
+                                    </button>
+                                    <button type="button" id="refresh" name="refresh" class="btn layui-bg-gray"
+                                            title="刷新">
+                                        <i class="fa fa-refresh"></i> 刷新
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <div class="form-group form-inline">
+                                <!--<select class="form-control" id="stype" name="stype">
+                                    <option value="0" selected>=请选择字段=</option>
+                                    <option value="1">姓名</option>
+                                    <option value="2">住址</option>
+                                </select>-->
+                                <input type="text" id="svalue" name="svalue" class="form-control"
+                                       placeholder="请输入会议标题"/>
+                                <div class="btn-group">
+                                    <button class="btn layui-bg-blue btn-search" id="search" name="search"
+                                            onclick="search()">查找
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--工具栏/-->
+
+                        <!--数据列表-->
+
+                        <table id="example1" class="table table-bordered table-striped text-center">
+                            <thead>
+                            <tr>
+                                <th>会议ID</th>
+                                <th>会议标题</th>
+                                <th>开始时间</th>
+                                <th>结束时间</th>
+                                <th>举办地点</th>
+                                <th>涉及领域</th>
+                                <th>会议简介</th>
+                                <th style="min-width: 150px;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="conference:${conferencePageInfo.list}">
+                                <td style="vertical-align: middle;" th:text="${conference.id}"></td>
+                                <td style="vertical-align: middle;" th:text="${conference.title}"></td>
+                                <td style="vertical-align: middle;" th:text="${#dates.format(conference.date_start, 'YYYY-MM-dd HH:mm:ss')}"></td>
+                                <td style="vertical-align: middle;" th:text="${#dates.format(conference.date_end, 'YYYY-MM-dd HH:mm:ss')}"></td>
+                                <td style="vertical-align: middle;" th:text="${conference.location}"></td>
+                                <td style="vertical-align: middle;" th:text="${conference.area}"></td>
+                                <td style="min-width: 150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:200px;vertical-align: middle;"
+                                    th:text="${conference.introduction}"></td>
+                                <td style="vertical-align: middle;">
+
+                                    <button type="button" class="btn layui-bg-blue btn-sm" id="editConference" name="editConference"
+                                            th:onclick="|editConference(${conference.id})|">编辑
+                                    </button>
+                                    <button type="button" class="btn bg-red btn-sm" id="delConference" name="delConference"
+                                            th:onclick="|delConference(${conference.id})|">删除
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!--数据列表/-->
+                    </div>
+                    <!-- 数据表格 /-->
+                    <!--分页-->
+                    <div id="pagehelp" style="width: 50vw;margin: 10px auto;text-align: center;"></div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!--------------- 新增模态框（Modal） ---------------->
+            <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="addModalLabel">创建会议</h3>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label for="title1">会议标题</label>
+                                <input type="text" id="title1" name="title1" class="form-control" placeholder="会议标题">
+                            </div>
+                            <!-- Date and time range -->
+                            <div class="form-group">
+                                <label for="date_start_end1">会议开始和结束时间</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <input type="text" name="date_start_end1" class="form-control pull-right" id="date_start_end1">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="location1">会议举办地点</label>
+                                <input type="text" name="location1" id="location1" class="form-control" placeholder="会议举办地点">
+                            </div>
+                            <div class="form-group">
+                                <label for="area1">涉及领域</label>
+                                <input type="text" name="area1" id="area1" class="form-control" placeholder="涉及领域">
+                            </div>
+                            <div class="form-group">
+                                <label for="topic1">主题</label>
+                                <input type="text" name="topic1" id="topic1" class="form-control" placeholder="主题">
+                            </div>
+                            <div class="form-group">
+                                <label for="introduction1">会议简介</label>
+                                <textarea name="introduction1" id="introduction1" class="form-control" rows="3" placeholder="请输入会议简介"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="confer_link1">会议主页链接</label>
+                                <input type="text" name="confer_link1" id="confer_link1" class="form-control" placeholder="会议主页链接">
+                            </div>
+                            <div class="form-group">
+                                <label for="external_link1">会议外部链接</label>
+                                <input type="text" name="external_link1" id="external_link1" class="form-control" placeholder="会议外部链接">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="close1" name="close1" class="btn btn-default"
+                                    data-dismiss="modal"><span class="glyphicon glyphicon-remove"
+                                                               aria-hidden="true"></span>关闭
+                            </button>
+                            <button type="button" id="btn_submit1" class="btn btn-primary"><span
+                                    class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--------------- 修改模态框（Modal） ---------------->
+            <div class="modal fade bs-example-modal-lg" id="updateModal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="updateModalLabel">修改会议信息</h3>
+                        </div>
+                        <div class="modal-body">
+                            <!--注意需要一个隐藏域的id用来传值-->
+                            <div class="form-group">
+                                <input type="hidden" id="id" name="id" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="title2">会议标题</label>
+                                <input type="text" id="title2" name="title2" class="form-control" placeholder="会议标题">
+                            </div>
+                            <!-- Date and time range -->
+                            <div class="form-group">
+                                <label for="date_start_end2">会议开始和结束时间</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <input type="text" name="date_start_end2" class="form-control pull-right" id="date_start_end2">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="location2">会议举办地点</label>
+                                <input type="text" name="location2" id="location2" class="form-control" placeholder="会议举办地点">
+                            </div>
+                            <div class="form-group">
+                                <label for="area2">涉及领域</label>
+                                <input type="text" name="area2" id="area2" class="form-control" placeholder="涉及领域">
+                            </div>
+                            <div class="form-group">
+                                <label for="topic2">主题</label>
+                                <input type="text" name="topic2" id="topic2" class="form-control" placeholder="主题">
+                            </div>
+                            <div class="form-group">
+                                <label for="introduction2">会议简介</label>
+                                <textarea name="introduction2" id="introduction2" class="form-control" rows="3" placeholder="请输入会议简介"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="confer_link2">会议主页链接</label>
+                                <input type="text" name="confer_link2" id="confer_link2" class="form-control" placeholder="会议主页链接">
+                            </div>
+                            <div class="form-group">
+                                <label for="external_link2">会议外部链接</label>
+                                <input type="text" name="external_link2" id="external_link2" class="form-control" placeholder="会议外部链接">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="close2" name="close2" class="btn btn-default"
+                                    data-dismiss="modal"><span class="glyphicon glyphicon-remove"
+                                                               aria-hidden="true"></span>关闭
+                            </button>
+                            <button type="button" id="btn_submit2" class="btn btn-primary"><span
+                                    class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!------- 尾部Footer ------>
+    <div th:replace="admin/AdminLTEdemo::main_footer"></div>
+
+    <!------------------------------------右侧设置按钮的侧边栏 ------------------------------------>
+    <div th:replace="admin/AdminLTEdemo::control_sidebar"></div>
+    <!-- /.control-sidebar -->
+    <!-- 添加侧边栏的背景。这个 div必须放在 control-sidebar 之后 -->
+    <div class="control-sidebar-bg"></div>
+</div>
+
+<!--------------------------- 导入的 JS SCRIPTS ------------------------>
+<!-- jQuery 3 -->
+<script th:src="@{/adminLTE/bower_components/jquery/dist/jquery.min.js}"
+        src="/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js}"
+        src="/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/adminLTE/dist/js/adminlte.min.js}" src="/adminLTE/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script th:src="@{/adminLTE/dist/js/demo.js}" src="/adminLTE/dist/js/demo.js"></script>
+<!-- date-range-picker -->
+<script th:src="@{/adminLTE/bower_components/moment/min/moment.min.js}"></script>
+<script th:src="@{/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js}"></script>
+<!-- bootstrap datepicker -->
+<script th:src="@{/adminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js}"></script>
+<!-- bootstrap time picker -->
+<script th:src="@{/adminLTE/plugins/timepicker/bootstrap-timepicker.min.js}"></script>
+
+<!-- layui -->
+<script th:src="@{/layui/layui.js}" src="/layui/layui.js"></script>
+<!-- DataTables -->
+<script th:src="@{/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js}" src="/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}" src="/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- jquery-confirm jquery-form-->
+<script th:src="@{/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.js}" src="/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.js "></script>
+<script th:src="@{/adminLTE/plugins/jqueryComfirm/jquery-form.min.js}" src="/adminLTE/plugins/jqueryComfirm/jquery-form.min.js"></script>
+
+<script>
+    $(function () {
+        //Date range picker with time picker
+        $('#date_start_end1').daterangepicker({ timePicker: true, timePicker24Hour: true, timePickerIncrement: 30, locale: { format: 'YYYY-MM-DD HH:mm:ss', separator: "/" }})
+        $('#date_start_end2').daterangepicker({ timePicker: true, timePicker24Hour: true, timePickerIncrement: 30, autoUpdateInput: false, locale: { format: 'YYYY-MM-DD HH:mm:ss', separator: "/" }})
+    })
+</script>
+
+<script th:inline="javascript" type="text/javascript" rel="script">
+    let announcerInfo = [[${announcerInfo}]];
+    let searchString = [[${searchString}]];
+</script>
+
+<script>
+    /*数据表格脚本*/
+    $(function () {
+        $('#svalue').attr("value", searchString);
+        layui.use(['laypage', 'element', 'layer'], function () {
+            var element = layui.element;
+            var laypage = layui.laypage,
+                layer = layui.layer;
+            //完整功能
+            laypage.render({
+                elem: 'pagehelp',
+                count: [[${conferencePageInfo.total}]], //总数据条数
+                limit: [[${conferencePageInfo.pageSize}]], //每页显示多少条数据
+                curr: [[${conferencePageInfo.pageNum}]], //当前第页码
+                theme: '#1E9FFF', //颜色主题
+                first: "首页",
+                last: "尾页",
+                layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'], //分页插件控件
+                jump: function (obj, first) {
+                    //首次不执行
+                    if (!first) {
+                        //这里是第二次以后才执行的
+                        //console.log(obj);
+                        //location.href = "/admin/conference_manage?pageNum=" + obj.curr + "&&pageSize=" + obj.limit
+                        var searchString = $("#svalue").val();
+                        location.href = "/admin/conference_manage?pageNum=" + obj.curr + "&&pageSize=" + obj.limit + "&searchString=" + searchString
+                    }
+                }
+            });
+        });
+    })
+
+    // 搜索会议标题
+    function search() {
+        var searchString = $("#svalue").val();
+        location.href = "/admin/conference_manage?searchString=" + searchString
+    }
+
+    /*加载添加用户信息模态框*/
+    $("#btn_add").click(function () {
+        $("#addModalLabel").text("创建会议");
+        $('#addModal').modal();
+    });
+    /*点击关闭模态框后重载页面*/
+    $("#close1,#close2").click(function () {
+        window.location.reload();
+    });
+    $("#refresh").click(function () {
+        location.href = "/admin/conference_manage"
+    });
+    /*点击添加用户模态框的提交按钮*/
+    $('#btn_submit1').on('click', function () {
+        var title1 = $("#title1").val();
+        if (title1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议标题不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#title1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var date_start_end1 = $("#date_start_end1").val();
+        if (date_start_end1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议时间不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#date_start_end1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var date_start1 = date_start_end1.split('/')[0];
+        var date_end1 = date_start_end1.split('/')[1];
+        var location1 = $("#location1").val();
+        if (location1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议地点不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#location1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var area1 = $("#area1").val();
+        if (area1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '涉及领域不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#area1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var topic1 = $("#topic1").val();
+        if (topic1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '主题不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#topic1").focus();
+                    }
+                },
+
+            });
+            return;
+        }
+        var introduction1 = $("#introduction1").val();
+        var confer_link1 = $("#confer_link1").val();
+        if (confer_link1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议主页链接不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#confer_link1").focus();
+                    }
+                },
+
+            });
+            return;
+        }
+        var external_link1 = $("#external_link1").val();
+        $.confirm({
+            title: '创建提示',
+            content: '确认要创建吗？',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            // opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '确定',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        //layer.load();
+                        $.ajax({
+                            url: "[[@{/admin/createConference}]]",
+                            //secureuri : false,
+                            dataType: 'json',//此时指定的是后台需要返回json字符串,前端自己解析,可以注释掉.后台直接返回map
+                            data: {
+                                title: title1,
+                                date_start: date_start1,
+                                date_create: timestampToTime(Date.parse(new Date())/1000),
+                                date_end: date_end1,
+                                location: location1,
+                                area: area1,
+                                topic: topic1,
+                                introduction: introduction1,
+                                confer_link: confer_link1,
+                                external_link: external_link1,
+                                announcer_id: announcerInfo.id
+                            },
+                            success: function (data, status) {
+                                var arr = data.msg;
+                                if (arr == "1") {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '添加成功!',
+                                        buttons: {
+                                            确定: function () {
+                                                window.location.reload();
+                                            }
+                                        },
+
+                                    });
+                                } else {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '添加失败!',
+                                        buttons: {
+                                            确定: function () {
+                                            }
+                                        },
+
+                                    });
+
+                                }
+                            },
+                            error: function (data, status, e) {
+                                $.alert({
+                                    title: '提示信息',
+                                    content: '添加失败!',
+                                    buttons: {
+                                        确定: function () {
+                                        }
+                                    },
+
+                                });
+                            }
+                        });
+
+                    },
+                },
+                取消: function () {
+                    //$.alert('你点击了<strong>取消</strong>');
+                }
+            }
+        });
+    });
+
+    function delConference(id) {
+        $.confirm({
+            title: '提示信息',
+            content: '确认要删除吗？',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            // opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '确定',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        $.ajax({
+                            url: "[[@{/admin/deleteConference}]]",
+                            //secureuri : false,
+                            dataType: 'json',//此时指定的是后台需要返回json字符串,前端自己解析,可以注释掉.后台直接返回map
+                            data: {
+                                id: id
+                            },
+                            success: function (data, status) {
+                                var arr = data.msg;
+                                if (arr == "1") {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '删除成功!',
+                                        buttons: {
+                                            确定: function () {
+                                                window.location.reload();
+                                            }
+                                        },
+
+                                    });
+                                } else {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '删除失败!',
+                                        buttons: {
+                                            确定: function () {
+                                            }
+                                        },
+
+                                    });
+
+                                }
+                            },
+                            error: function (data, status, e) {
+                                $.alert({
+                                    title: '提示信息',
+                                    content: '删除失败!',
+                                    buttons: {
+                                        确定: function () {
+                                        }
+                                    },
+
+                                });
+                            }
+                        });
+
+                    },
+                },
+                取消: function () {
+                    //$.alert('你点击了<strong>取消</strong>');
+                }
+            }
+        });
+    }
+
+    function editConference(id) {
+        $.getJSON("[[@{/admin/queryConference}]]", "conference_id=" + id, function (data) {
+            $('#id').attr("value", data.id);
+            $('#title2').attr("value", data.title);
+            $('#date_start_end2').attr("value", dateFormat("YYYY-mm-dd HH:MM:SS", new Date(data.date_start)) + '/' + dateFormat("YYYY-mm-dd HH:MM:SS", new Date(data.date_end)));
+            $('#location2').attr("value", data.location);
+            $('#area2').attr("value", data.area);
+            $('#topic2').attr("value", data.topic);
+            $('#introduction2').text(data.introduction);
+            $('#confer_link2').attr("value", data.confer_link);
+            $('#external_link2').attr("value", data.external_link);
+            $('#updateModal').modal('show');
+        })
+    }
+
+    $('#btn_submit2').on('click', function () {
+        var id = $("#id").val();
+        var title2 = $("#title2").val();
+        if (title2 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议标题不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#title2").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var date_start_end2 = $("#date_start_end2").val();
+        if (date_start_end2 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议时间不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#date_start_end2").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var date_start2 = date_start_end2.split('/')[0];
+        var date_end2 = date_start_end2.split('/')[1];
+        var location2 = $("#location2").val();
+        if (location2 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议地点不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#location2").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var area2 = $("#area2").val();
+        if (area2 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '涉及领域不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#area2").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var topic2 = $("#topic2").val();
+        if (topic2 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '主题不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#topic2").focus();
+                    }
+                },
+
+            });
+            return;
+        }
+        var introduction2 = $("#introduction2").val();
+        var confer_link2 = $("#confer_link2").val();
+        if (confer_link2 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '会议主页链接不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#confer_link2").focus();
+                    }
+                },
+
+            });
+            return;
+        }
+        var external_link2 = $("#external_link2").val();
+        $.confirm({
+            title: '提示信息',
+            content: '确认要修改吗？',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            // opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '确定',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        //layer.load();
+                        $.ajax({
+                            url: "[[@{/admin/updateConference}]]",
+                            dataType: 'json',//此时指定的是后台需要返回json字符串,前端自己解析,可以注释掉.后台直接返回map
+                            data: {
+                                id: id,
+                                title: title2,
+                                date_start: date_start2,
+                                date_end: date_end2,
+                                location: location2,
+                                area: area2,
+                                topic: topic2,
+                                introduction: introduction2,
+                                confer_link: confer_link2,
+                                external_link: external_link2
+                            },
+                            success: function (data, status) {
+                                var arr = data.msg;
+                                if (arr == "1") {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '修改成功!',
+                                        buttons: {
+                                            确定: function () {
+                                                window.location.reload();
+                                            }
+                                        },
+
+                                    });
+                                } else {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '修改失败!',
+                                        buttons: {
+                                            确定: function () {
+                                            }
+                                        },
+
+                                    });
+
+                                }
+                            },
+                            error: function (data, status, e) {
+                                $.alert({
+                                    title: '提示信息',
+                                    content: '修改失败!',
+                                    buttons: {
+                                        确定: function () {
+                                        }
+                                    },
+
+                                });
+                            }
+                        });
+
+                    },
+                },
+                取消: function () {
+                    //$.alert('你点击了<strong>取消</strong>');
+                }
+            }
+        });
+    });
+
+    // 获取当前时间
+    function timestampToTime(timestamp) {
+        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-';
+        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1):date.getMonth()+1) + '-';
+        var D = (date.getDate()< 10 ? '0'+date.getDate():date.getDate())+ ' ';
+        var h = (date.getHours() < 10 ? '0'+date.getHours():date.getHours())+ ':';
+        var m = (date.getMinutes() < 10 ? '0'+date.getMinutes():date.getMinutes()) + ':';
+        var s = date.getSeconds() < 10 ? '0'+date.getSeconds():date.getSeconds();
+        return Y+M+D+h+m+s;
+    }
+    // 更改日期格式
+    function dateFormat(fmt, date) {
+        let ret;
+        const opt = {
+            "Y+": date.getFullYear().toString(),        // 年
+            "m+": (date.getMonth() + 1).toString(),     // 月
+            "d+": date.getDate().toString(),            // 日
+            "H+": date.getHours().toString(),           // 时
+            "M+": date.getMinutes().toString(),         // 分
+            "S+": date.getSeconds().toString()          // 秒
+            // 有其他格式化字符需求可以继续添加，必须转化成字符串
+        };
+        for (let k in opt) {
+            ret = new RegExp("(" + k + ")").exec(fmt);
+            if (ret) {
+                fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+            };
+        };
+        return fmt;
+    }
+
+</script>
+
+</body>
+</html>

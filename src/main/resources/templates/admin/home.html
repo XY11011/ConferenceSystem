@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>系统首页</title>
+    <!-- 告诉浏览器该页面是自适应布局 -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/font-awesome/css/font-awesome.min.css}"
+          href="/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/Ionicons/css/ionicons.min.css}"
+          href="/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/AdminLTE.min.css}" href="/adminLTE/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE 皮肤。默认使用蓝色皮肤。
+        您可以选择其他皮肤。皮肤样式写在 body 标签中，
+        以便使之生效。 -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/skins/_all-skins.min.css}"
+          href="/adminLTE/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+
+<body class="hold-transition skin-blue-light sidebar-mini">
+<div class="wrapper">
+
+    <!--------------------------------------------- 头部 ------------------------------------------>
+    <!--引入抽取的AdminLTEdemo-->
+    <!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+    <div th:replace="admin/AdminLTEdemo::main_header"></div>
+
+    <!-------------------------------------------- 左部侧边栏 ---------------------------------------------->
+    <div th:replace="admin/AdminLTEdemo::#main_sidebar(activeUri='home')"></div>
+
+    <!------------------------------------- 页面主体内容 -------------------------------------->
+    <div class="content-wrapper">
+        <!------- 头部 (页眉) ------->
+        <section class="content-header">
+            <h1>
+                首页
+                <small>欢迎您</small>
+            </h1>
+            <!-- 面包屑 -->
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <!--<li class="active">样例</li>-->
+            </ol>
+        </section>
+
+        <!------ 主体内容 ------>
+        <section class="content container-fluid" style="min-height: 0;padding-bottom: 0;">
+            <!-- 面板样例 -->
+            <div class="box box-primary">
+                <!-- 面板头部 -->
+                <div class="box-header with-border">
+                    <i class="fa fa-cube"></i>
+                    <h3 class="box-title">会议管理系统</h3>
+                </div>
+                <!-- 面板内容 -->
+            </div>
+            <!-- /.box-body -->
+
+        </section>
+
+        <section class="content" style="padding-top: 0;min-height: 0;">
+            <!-- Info boxes -->
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-aqua"><i class="fa fa-list"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">会议数量</span>
+                            <span class="info-box-number">[[${countAllConference}]]</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-yellow"><i class="fa fa-file-text-o"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">论文数量</span>
+                            <span class="info-box-number">[[${countAllPaper}]]</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <!-- fix for small devices only -->
+                <div class="clearfix visible-sm-block"></div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-green"><i class="fa fa-chain"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">已分配数量</span>
+                            <span class="info-box-number">[[${countDistributedPaper}]]</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-red"><i class="fa fa-unlink"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">未分配数量</span>
+                            <span class="info-box-number">[[${countUndistriPaper}]]</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+
+        <section class="content" style="padding-top: 0">
+            <!-- Bar chart -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-bar-chart-o"></i>
+
+                    <h3 class="box-title">系统概览</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div id="bar-chart" style="height: 300px;"></div>
+                </div>
+                <!-- /.box-body-->
+            </div>
+            <!-- /.box -->
+        </section>
+
+    </div>
+
+    <!------- 尾部Footer ------>
+    <div th:replace="admin/AdminLTEdemo::main_footer"></div>
+
+    <!------------------------------------右侧设置按钮的侧边栏 ------------------------------------>
+    <div th:replace="admin/AdminLTEdemo::control_sidebar"></div>
+    <!-- /.control-sidebar -->
+    <!-- 添加侧边栏的背景。这个 div必须放在 control-sidebar 之后 -->
+    <div class="control-sidebar-bg"></div>
+</div>
+
+
+<!--------------------------- 导入的 JS SCRIPTS ------------------------>
+<!-- jQuery 3 -->
+<script th:src="@{/adminLTE/bower_components/jquery/dist/jquery.min.js}"
+        src="/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js}"
+        src="/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/adminLTE/dist/js/adminlte.min.js}" src="/adminLTE/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script th:src="@{/adminLTE/dist/js/demo.js}" src="/adminLTE/dist/js/demo.js"></script>
+
+<!-- FLOT CHARTS -->
+<script th:src="@{/adminLTE/bower_components/Flot/jquery.flot.js}"></script>
+<!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+<script th:src="@{/adminLTE/bower_components/Flot/jquery.flot.resize.js}"></script>
+<!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
+<script th:src="@{/adminLTE/bower_components/Flot/jquery.flot.categories.js}"></script>
+<script>
+    $(function () {
+        /*
+         * BAR CHART
+         * ---------
+         */
+        var bar_data = {
+            data: [ ['会议总数', [[${countAllConference}]] ], ['论文总数', [[${countAllPaper}]] ], ['已分配论文数', [[${countDistributedPaper}]] ], ['未分配论文数', [[${countUndistriPaper}]] ] ],
+            color: '#3c8dbc'
+        }
+        $.plot('#bar-chart', [bar_data], {
+            grid: {
+                borderWidth: 1,
+                borderColor: '#f3f3f3',
+                tickColor: '#f3f3f3'
+            },
+            series: {
+                bars: {
+                    show: true,
+                    barWidth: 0.5,
+                    align: 'center'
+                }
+            },
+            xaxis: {
+                mode: 'categories',
+                tickLength: 0
+            }
+        })
+        /* END BAR CHART */
+    })
+</script>
+
+</body>
+
+</html>

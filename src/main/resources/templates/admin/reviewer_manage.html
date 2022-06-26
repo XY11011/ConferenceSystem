@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>审稿人列表</title>
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/font-awesome/css/font-awesome.min.css}"
+          href="/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/plugins/timepicker/bootstrap-timepicker.min.css}">
+    <!-- daterange picker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.css}">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/Ionicons/css/ionicons.min.css}"
+          href="/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/AdminLTE.min.css}" href="/adminLTE/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE 皮肤。默认使用蓝色皮肤。
+        您可以选择其他皮肤。皮肤样式写在 body 标签中，
+        以便使之生效。 -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/skins/_all-skins.min.css}"
+          href="/adminLTE/dist/css/skins/_all-skins.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}" href="/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!--layui样式-->
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="/layui/css/layui.css">
+    <!--jqueryComfirm样式-->
+    <link th:href="@{/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.css}" href="/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.css" rel="stylesheet">
+
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini">
+<div class="wrapper">
+
+    <!--------------------------------------------- 头部 ------------------------------------------>
+    <!--引入抽取的AdminLTEdemo-->
+    <!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+    <div th:replace="admin/AdminLTEdemo::main_header"></div>
+
+    <!-------------------------------------------- 左部侧边栏 ---------------------------------------------->
+    <div th:replace="admin/AdminLTEdemo::#main_sidebar(activeUri='reviewer_manage')"></div>
+
+    <!------------------------------------- 页面主体内容 -------------------------------------->
+    <div class="content-wrapper">
+        <!------- 头部 (页眉) ------->
+        <section class="content-header">
+            <h1>
+                审稿人管理
+                <!--<small>欢迎您</small>-->
+            </h1>
+            <!-- 面包屑 -->
+            <ol class="breadcrumb">
+                <li><a href="/admin/home"><i class="fa fa-dashboard"></i>首页</a></li>
+                <li class="active">审稿人管理</li>
+            </ol>
+        </section>
+
+        <!------ 主体内容 ------>
+        <section class="content container-fluid">
+            <!-- .box-body -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">审稿人信息列表</h3>
+                </div>
+
+                <div class="box-body">
+
+                    <!-- 数据表格 -->
+                    <div class="table-box">
+
+                        <!--工具栏-->
+                        <div class="pull-left">
+                            <div class="form-group form-inline">
+                                <div class="btn-group">
+                                    <button type="button" id="btn_add" name="btn_add" class="btn layui-bg-blue"
+                                            title="新建" onclick="">
+                                        <i class="fa fa-file-o"></i> 新建
+                                    </button>
+                                    <button type="button" id="refresh" name="refresh" class="btn layui-bg-gray"
+                                            title="刷新">
+                                        <i class="fa fa-refresh"></i> 刷新
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <div class="form-group form-inline">
+                                <!--<select class="form-control" id="stype" name="stype">
+                                    <option value="0" selected>=请选择字段=</option>
+                                    <option value="1">姓名</option>
+                                    <option value="2">住址</option>
+                                </select>-->
+                                <input type="text" id="svalue" name="svalue" class="form-control"
+                                       placeholder="请输入用户名"/>
+                                <div class="btn-group">
+                                    <button class="btn layui-bg-blue btn-search" id="search" name="search"
+                                            onclick="search()">查找
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--工具栏/-->
+
+                        <!--数据列表-->
+
+                        <table id="example1" class="table table-bordered table-striped text-center">
+                            <thead>
+                            <tr>
+                                <th>审稿人ID</th>
+                                <th>用户名</th>
+                                <th>姓名</th>
+                                <th>邮箱</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="reviewer:${reviewerPageInfo.list}">
+                                <td th:text="${reviewer.id}"></td>
+                                <td th:text="${reviewer.username}"></td>
+                                <td th:text="${reviewer.name}"></td>
+                                <td th:text="${reviewer.email}"></td>
+
+                                <td>
+                                    <button type="button" class="btn layui-bg-blue btn-sm" id="editConference" name="editConference"
+                                            th:onclick="|viewReviewer(${reviewer.id})|">查看
+                                    </button>
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!--数据列表/-->
+                    </div>
+                    <!-- 数据表格 /-->
+                    <!--分页-->
+                    <div id="pagehelp" style="width: 50vw;margin: 10px auto;text-align: center;"></div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!--------------- 新增模态框（Modal） ---------------->
+            <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="addModalLabel">添加审稿人</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="username1">用户名</label>
+                                <input type="text" id="username1" name="username1" class="form-control" placeholder="用户名">
+                            </div>
+                            <div class="form-group">
+                                <label for="password1">密码</label>
+                                <input type="password" name="password1" id="password1" class="form-control" placeholder="密码">
+                            </div>
+                            <div class="form-group">
+                                <label for="password_confirm1">确认密码</label>
+                                <input type="password" name="password_confirm1" id="password_confirm1" class="form-control" placeholder="确认密码">
+                            </div>
+                            <div class="form-group">
+                                <label for="name1">姓名</label>
+                                <input type="text" name="name1" id="name1" class="form-control" placeholder="姓名">
+                            </div>
+                            <div class="form-group">
+                                <label for="email1">邮箱</label>
+                                <input type="text" name="email1" id="email1" class="form-control" placeholder="邮箱">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="close1" name="close1" class="btn btn-default"
+                                    data-dismiss="modal"><span class="glyphicon glyphicon-remove"
+                                                               aria-hidden="true"></span>关闭
+                            </button>
+                            <button type="button" id="btn_submit1" class="btn btn-primary"><span
+                                    class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--------------- 修改模态框（Modal） ---------------->
+            <div class="modal fade bs-example-modal-lg" id="updateModal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="updateModalLabel">查看审稿人信息</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="id">审稿人ID</label>
+                                <input readonly type="text" id="id" name="id" class="form-control" placeholder="审稿人ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="username2">用户名</label>
+                                <input readonly type="text" id="username2" name="username2" class="form-control" placeholder="用户名">
+                            </div>
+                            <div class="form-group">
+                                <label for="name2">姓名</label>
+                                <input readonly type="text" name="name2" id="name2" class="form-control" placeholder="姓名">
+                            </div>
+                            <div class="form-group">
+                                <label for="email2">邮箱</label>
+                                <input readonly type="text" name="email2" id="email2" class="form-control" placeholder="邮箱">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="close2" name="close2" class="btn btn-default"
+                                    data-dismiss="modal"><span class="glyphicon glyphicon-remove"
+                                                               aria-hidden="true"></span>关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!------- 尾部Footer ------>
+    <div th:replace="admin/AdminLTEdemo::main_footer"></div>
+
+    <!------------------------------------右侧设置按钮的侧边栏 ------------------------------------>
+    <div th:replace="admin/AdminLTEdemo::control_sidebar"></div>
+    <!-- /.control-sidebar -->
+    <!-- 添加侧边栏的背景。这个 div必须放在 control-sidebar 之后 -->
+    <div class="control-sidebar-bg"></div>
+</div>
+
+<!--------------------------- 导入的 JS SCRIPTS ------------------------>
+<!-- jQuery 3 -->
+<script th:src="@{/adminLTE/bower_components/jquery/dist/jquery.min.js}"
+        src="/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js}"
+        src="/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/adminLTE/dist/js/adminlte.min.js}" src="/adminLTE/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script th:src="@{/adminLTE/dist/js/demo.js}" src="/adminLTE/dist/js/demo.js"></script>
+<!-- date-range-picker -->
+<script th:src="@{/adminLTE/bower_components/moment/min/moment.min.js}"></script>
+<script th:src="@{/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js}"></script>
+<!-- bootstrap datepicker -->
+<script th:src="@{/adminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js}"></script>
+<!-- bootstrap time picker -->
+<script th:src="@{/adminLTE/plugins/timepicker/bootstrap-timepicker.min.js}"></script>
+
+<!-- layui -->
+<script th:src="@{/layui/layui.js}" src="/layui/layui.js"></script>
+<!-- DataTables -->
+<script th:src="@{/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js}" src="/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}" src="/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- jquery-confirm jquery-form-->
+<script th:src="@{/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.js}" src="/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.js "></script>
+<script th:src="@{/adminLTE/plugins/jqueryComfirm/jquery-form.min.js}" src="/adminLTE/plugins/jqueryComfirm/jquery-form.min.js"></script>
+
+<script>
+    $(function () {
+        //Date range picker with time picker
+        $('#date_start_end1').daterangepicker({ timePicker: true, timePicker24Hour: true, timePickerIncrement: 30, locale: { format: 'YYYY-MM-DD HH:mm:ss', separator: "/" }})
+        $('#date_start_end2').daterangepicker({ timePicker: true, timePicker24Hour: true, timePickerIncrement: 30, autoUpdateInput: false, locale: { format: 'YYYY-MM-DD HH:mm:ss', separator: "/" }})
+    })
+</script>
+
+<script th:inline="javascript" type="text/javascript" rel="script">
+    let announcerInfo = [[${announcerInfo}]];
+    let searchString = [[${searchString}]];
+</script>
+
+<script>
+    /*数据表格脚本*/
+    $(function () {
+        $('#svalue').attr("value", searchString);
+        layui.use(['laypage', 'element', 'layer'], function () {
+            var element = layui.element;
+            var laypage = layui.laypage,
+                layer = layui.layer;
+            //完整功能
+            laypage.render({
+                elem: 'pagehelp',
+                count: [[${reviewerPageInfo.total}]], //总数据条数
+                limit: [[${reviewerPageInfo.pageSize}]], //每页显示多少条数据
+                curr: [[${reviewerPageInfo.pageNum}]], //当前第页码
+                theme: '#1E9FFF', //颜色主题
+                first: "首页",
+                last: "尾页",
+                layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'], //分页插件控件
+                jump: function (obj, first) {
+                    //首次不执行
+                    if (!first) {
+                        //这里是第二次以后才执行的
+                        //console.log(obj);
+                        //location.href = "/admin/conference_manage?pageNum=" + obj.curr + "&&pageSize=" + obj.limit
+                        var searchString = $("#svalue").val();
+                        location.href = "/admin/reviewer_manage?pageNum=" + obj.curr + "&&pageSize=" + obj.limit + "&searchString=" + searchString
+                    }
+                }
+            });
+        });
+    })
+
+    // 搜索会议标题
+    function search() {
+        var searchString = $("#svalue").val();
+        location.href = "/admin/reviewer_manage?searchString=" + searchString
+    }
+
+    /*加载添加用户信息模态框*/
+    $("#btn_add").click(function () {
+        $("#addModalLabel").text("添加审稿人");
+        $('#addModal').modal();
+    });
+    /*点击关闭模态框后重载页面*/
+    $("#close1,#close2").click(function () {
+        window.location.reload();
+    });
+    $("#refresh").click(function () {
+        location.href = "/admin/reviewer_manage"
+    });
+    /*点击添加用户模态框的提交按钮*/
+    $('#btn_submit1').on('click', function () {
+        var username1 = $("#username1").val();
+        if (username1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '用户名不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#username1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var password1 = $("#password1").val();
+        var password_confirm1 = $("#password_confirm1").val();
+        if (password1 == "" || password_confirm1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '密码不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#password1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        } else if (password1 != password_confirm1) {
+            $.alert({
+                title: '提示信息',
+                content: '密码输入不一致!',
+                buttons: {
+                    确定: function () {
+                        $("#password1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var name1 = $("#name1").val();
+        if (name1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '姓名不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#name1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        var email1 = $("#email1").val();
+        if (email1 == "") {
+            $.alert({
+                title: '提示信息',
+                content: '邮箱不能为空!',
+                buttons: {
+                    确定: function () {
+                        $("#email1").focus();
+
+                    }
+                },
+
+            });
+            return;
+        }
+        $.confirm({
+            title: '添加提示',
+            content: '确认要添加吗？',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            // opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '确定',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        //layer.load();
+                        $.ajax({
+                            url: "[[@{/admin/createReviewer}]]",
+                            //secureuri : false,
+                            dataType: 'json',//此时指定的是后台需要返回json字符串,前端自己解析,可以注释掉.后台直接返回map
+                            data: {
+                                username: username1,
+                                password: password1,
+                                name: name1,
+                                email: email1
+                            },
+                            success: function (data, status) {
+                                var arr = data.msg;
+                                if (arr == "1") {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '添加成功!',
+                                        buttons: {
+                                            确定: function () {
+                                                window.location.reload();
+                                            }
+                                        },
+
+                                    });
+                                } else {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '添加失败!',
+                                        buttons: {
+                                            确定: function () {
+                                            }
+                                        },
+
+                                    });
+
+                                }
+                            },
+                            error: function (data, status, e) {
+                                $.alert({
+                                    title: '提示信息',
+                                    content: '添加失败!',
+                                    buttons: {
+                                        确定: function () {
+                                        }
+                                    },
+
+                                });
+                            }
+                        });
+
+                    },
+                },
+                取消: function () {
+                    //$.alert('你点击了<strong>取消</strong>');
+                }
+            }
+        });
+    });
+
+    function viewReviewer(id) {
+        $.getJSON("[[@{/admin/queryReviewer}]]", "reviewer_id=" + id, function (data) {
+            $('#id').attr("value", data.id);
+            $('#username2').attr("value", data.username);
+            $('#name2').attr("value", data.name);
+            $('#email2').attr("value", data.email);
+            $('#updateModal').modal('show');
+        })
+    }
+
+</script>
+
+</body>
+</html>

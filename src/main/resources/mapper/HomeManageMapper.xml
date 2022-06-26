@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HomeManageMapper">
+    <select id="countAllConference" resultType="java.lang.Integer">
+        select count(*) from conference where announcer_id = #{announcer_id}
+    </select>
+    <select id="countPaperByConferenceId" resultType="java.lang.Integer">
+        select count(*) from paper where confer_id = #{confer_id}
+    </select>
+    <select id="countUndistriPaper" resultType="java.lang.Integer">
+        select count(*) from paper where confer_id = #{confer_id} and distri_state = 0
+    </select>
+    <select id="countDistributedPaper" resultType="java.lang.Integer">
+        select count(*) from paper where confer_id = #{confer_id} and distri_state = 1
+    </select>
+</mapper>

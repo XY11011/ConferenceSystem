@@ -1,0 +1,46 @@
+.row{
+    margin-left: 50px;
+    margin-right: 50px;
+}
+.nav-none{
+    color: #ffffff
+}
+.nav-active{
+    color:#000000;
+}
+
+.nav-li{
+    border-start-start-radius: 5px;
+    border-start-end-radius: 5px;
+}
+.nav-li-active{
+    background-color: #ffffff;
+    border-start-start-radius: 5px;
+    border-start-end-radius: 5px;
+}
+
+.container-body{
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.paper-item{
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.row-title{
+    height:50px;
+}
+.row-center{
+    /*flex布局*/
+    display: flex;
+    /*垂直居中*/
+    align-items: center;
+}
+
+
+.container-body{
+    margin-left: 30px;
+    margin-right: 30px;
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>会议论文</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+    <link th:href="@{/css/conference.css}" rel="stylesheet"/>
+    <script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+    <style>
+    </style>
+</head>
+<body>
+<!-- 顶部栏-->
+<div th:replace="~{common/common :: header_new}"></div>
+<div th:replace="~{common/common :: model_user}"></div>
+<div th:replace="~{common/common :: model_reviewer}"></div>
+
+<div style="height: 50px"></div>
+<input type="hidden" id="conferId" th:value="${conferInfo.id}"/>
+<div class="container-fluid confer-center" style="height: 125px;text-align: center;background-color: rgb(2 109 155)">
+    <span style="font-size: 28px;color: #ffffff"><b>[[${conferInfo.title}]]</b></span>
+</div>
+
+<div class="container-fluid confer-center" style="height:70px;text-align: center;">
+    <span style="font-size: 16px"><b>[[${conferInfo.date_start}]]-[[${conferInfo.date_end}]]</b></span>
+    <span style="font-size: 16px;margin-left: 20px"><b>[[${conferInfo.location}]]</b></span>
+</div>
+
+<!--内容-->
+<div class="container-fluid">
+    <div th:if="not ${#lists.isEmpty(paperList)}">
+        <div  th:each="paper : ${paperList}" class="panel panel-default paper-left-label"  style="margin:5px 30px 30px 30px">
+            <div class="panel-body">
+                <div class="row row-center" style="margin-left: 5px;margin-right: 5px">
+                    <div class="col-lg-10"><span style="font-size: 20px;color: #0480b5;"><b>[[${paper.title}]]</b></span></div>
+                    <div class="col-lg-1"><a class="glyphicon glyphicon-save" style="font-size: 22px;text-decoration:none;color: #337ab7;" href="#" th:onclick="downloadFile([[${paper.location}]])"></a></div>
+                    <div class="col-lg-1" th:switch="${paper.paper_state}" style="font-size: 28px;margin-right: 20px">
+<!--                        <img th:case="2" th:src="@{/img/accepted.jpg}" style="width: 70px;height:70px"/>-->
+                        <div th:case="2" style="color: #c02c2c;margin-right: 20px;font-weight:bold;">Rejected</div>
+                        <div th:case="1" style="color: #1bb61c;margin-right: 20px;font-weight:bold;">Accepted</div>
+                        <div th:case="0" style="color: #c5a920;margin-right: 20px;font-weight:bold;">Reviewing</div>
+                    </div>
+                </div>
+                <div class="row" style="margin:5px 5px">
+                    <div class="col-lg-1 paper-title-label">Author:</div>
+                    <div class="col-lg-11 paper-content">[[${paper.author}]]</div>
+                </div>
+                <div class="row" style="margin:5px 5px">
+                    <div class="col-lg-1 paper-title-label">Keywords:</div>
+                    <div class="col-lg-11 paper-content">[[${paper.keywords}]]</div>
+                </div>
+                <div class="row" style="margin:10px 5px">
+                    <div class="col-lg-1 paper-title-label">Abstract:</div>
+                    <textarea class="col-lg-10 paper-content" style="height:100px;border-color:#e5e5e5;padding-top: 5px;line-height: 1.5" readonly>[[${paper.paper_abstract}]]</textarea>
+                </div>
+                <div class="row" style="margin: 20px 5px">
+                    <div class="col-lg-2 paper-title-label">Review comments:</div>
+                </div>
+<!--                评论部分-->
+                <div style="margin: 5px 80px">
+                    <div class="col-lg-4" th:each="reviewItem:${paper.review}">
+                        <div class="col-lg-10 panel comment-panel" style="border-color:#e0e0e0" >
+                            <div class="row" style="margin: 10px 5px 5px 5px">
+                                <span class="paper-title-label">PC Member:</span>
+                                <span class="paper-content" style="margin-left: 20px">[[${reviewItem.username}]]</span>
+                            </div>
+                            <div class="row" style="margin: 5px 5px">
+                                <span class="paper-title-label">Rank:</span>
+                                <span th:switch="${reviewItem.rank}" style="margin-left: 20px">
+                                <span class="paper-content" th:case="0" style="color: #1bb61c;font-size: 20px">Excellent</span>
+                                <span class="paper-content" th:case="1" style="color: #2f8ebb;font-size: 20px">Better</span>
+                                <span class="paper-content" th:case="2" style="color: #c5a920;font-size: 20px">Ordinary</span>
+                                <span class="paper-content" th:case="3" style="color: #c02c2c;font-size: 20px">Worse</span>
+                            </span>
+                            </div>
+                            <div class="row" style="margin: 5px 5px">
+                                <span class="col-lg-4 paper-title-label" style="padding-left: 0">Comments:</span>
+                                <textarea class="col-lg-8 paper-content" style="height: 50px;border-color:#e5e5e5;line-height: 1.5" readonly>[[${reviewItem.comment}]]</textarea>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(paperList)}" style="text-align: center">
+        <div class="container-fluid container-body" style="text-align: center;margin-top: 20px;font-size: 20px">没有相关论文</div>
+    </div>
+</div>
+<!--页码-->
+<div style="height:50px"></div>
+<div th:insert="~{user/common :: nav-page-paper}"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/reviewer.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script>
+
+</script>
+</body>
+</html>

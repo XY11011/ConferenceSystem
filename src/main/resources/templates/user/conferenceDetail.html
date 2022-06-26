@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>会议详情页</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+    <link th:href="@{/css/conference.css}" rel="stylesheet"/>
+    <script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+    <style>
+        body, html {
+            padding: 0;
+            margin: 0;
+        }
+
+        .main_title {
+            height: 120px;
+            line-height: 120px;
+            background-color: #026d9b;
+            margin-bottom: 30px;
+        }
+
+        .main_title_font {
+            color: #fff;
+            font-size: 27px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .info_frame {
+            border-radius: 3px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-left: 7px solid #026d9b;
+            padding: 15px;
+            margin-right: 30px;
+            margin-left: 30px;
+        }
+
+        .area_label {
+            float: left;
+            padding: 1px 10px;
+            background-color: #555555;
+            color: #fff;
+            border-radius: 10px;
+            margin-left: 10px
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/common :: header_new}"></div>
+<div th:replace="~{common/common :: model_user}"></div>
+<div th:replace="~{common/common :: model_reviewer}"></div>
+<div style="height: 50px"></div>
+<div>
+    <!--    头部导航栏-->
+    <!--    会议信息栏-->
+    <input type="text" th:value="${conference.id}" id="conferId" hidden/>
+    <input type="text" th:value="${username}" id="username" hidden/>
+    <div>
+        <div class="main_title">
+            <div class="main_title_font" th:text="${conference.title}"></div>
+        </div>
+        <div class="info_frame">
+            <div style="margin-bottom: 7px">
+                <i class="layui-icon layui-icon-date" style="font-size: 18px; margin-right: 5px"></i>
+                <label style="font-weight: bold">
+                    <label th:text="${conference.date_start}"></label>-
+                    <label th:text="${conference.date_end}"></label>
+                </label>
+            </div>
+            <div>
+                <i class="layui-icon layui-icon-location" style="font-size: 18px; margin-right: 5px"></i>
+                <label th:text="${conference.location}"></label>
+            </div>
+        </div>
+        <div class="info_frame">
+            <div style="margin-bottom: 10px; height: 20px;line-height: 20px;">
+                <div style="float: left">
+                    <i class="layui-icon layui-icon-note" style="font-size: 18px; margin-right: 5px"></i>
+                    <label>
+                        Rearch area
+                    </label>
+                </div>
+                <div class="area_label" th:text="${conference.area}"></div>
+            </div>
+            <div style="height: 20px;line-height: 20px;">
+                <div style="float: left;">
+                    <i class="layui-icon layui-icon-key" style="font-size: 18px; margin-right: 5px"></i>
+                    <label>
+                        Topic
+                    </label>
+                </div>
+                <div class="area_label" th:text="${conference.topic}"></div>
+            </div>
+        </div>
+        <div class="info_frame">
+            <div style="margin-bottom: 7px">
+                <i class="layui-icon layui-icon-ok" style="font-size: 18px; margin-right: 5px"></i>
+                <label>Aims and Scope</label>
+                </label>
+            </div>
+            <div th:text="${conference.introduction}" style="margin-left: 26px;line-height: 1.5"></div>
+        </div>
+        <div class="info_frame">
+            <div style="margin-bottom: 10px; height: 20px;line-height: 20px;">
+                <div style="float: left">
+                    <i class="layui-icon layui-icon-link" style="font-size: 18px; margin-right: 5px"></i>
+                    <label>
+                        External link：
+                    </label>
+                </div>
+                <a th:text="${conference.external_link}" th:href="${conference.external_link}" target="_blank"  style="color: #337ab7"></a>
+            </div>
+            <div style="height: 20px;line-height: 20px;">
+                <div style="float: left;">
+                    <i class="layui-icon layui-icon-link" style="font-size: 18px; margin-right: 5px"></i>
+                    <label>
+                        Conference link：
+                    </label>
+                </div>
+                <a th:text="${conference.confer_link}" th:href="${conference.confer_link}" target="_blank" style="color: #337ab7"></a>
+            </div>
+        </div>
+        <div style="text-align: center">
+            <button id="toSubmit" type="button" class="layui-btn"
+                    style="margin-top: 30px;margin-bottom: 20px;height: 45px;line-height: 45px;background-color: #026d9b;border-radius: 3px;">
+                Create a new submission
+            </button>
+        </div>
+
+    </div>
+</div>
+<script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/reviewer.js}"></script>
+<script>
+    // console.log("aaaaa"+[[${conference.confer_link}]]);
+    layui.use(['layer', 'jquery'], function () {
+        var layer = layui.layer,
+            $ = layui.jquery;
+
+        $("#toSubmit").on('click', function () {
+            console.log('触发了---')
+            var conferId = $('#conferId').val()
+            console.log(conferId)
+            var username=$('#username').val()
+            // console.log("username", [[${username}]]);
+            //未登录状态
+            if (username.length == 0) {
+                console.log('请先登录')
+                // layer.msg('请先登录');
+                layer.alert('请先登录',{icon: 5});
+            } else { //已登录
+                let tempForm = document.createElement("form");
+                tempForm.id = "tempForm1";
+                tempForm.method = "post";
+                tempForm.action = "/toSubmitPaper";
+
+                let hideInput1 = document.createElement("input");
+                hideInput1.type = "hidden";
+                hideInput1.name = "conferId";
+                hideInput1.value = conferId;
+                tempForm.appendChild(hideInput1);
+
+                if (document.all) {    // 兼容不同浏览器
+                    tempForm.attachEvent("onsubmit", function () {
+                    });        //IE
+                } else {
+                    tempForm.addEventListener("submit", function () {
+                    }, false);    //firefox
+                }
+                document.body.appendChild(tempForm);
+                if (document.all) {    // 兼容不同浏览器
+                    tempForm.fireEvent("onsubmit");
+                } else {
+                    tempForm.dispatchEvent(new Event("submit"));
+                }
+                tempForm.submit();
+                // loading.hide();
+                document.body.removeChild(tempForm);
+                console.log("提交表单了----")
+
+                // $.ajax({
+                //     type: "POST",
+                //     url: "/toSubmitPaper",  //路径
+                //     data: conferId,
+                //     success: function (data) {
+                //
+                //     }
+                // })
+            }
+
+        })
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# 连接数据库信息
+spring:
+  datasource:
+    username: conference_db
+    password: conference123
+    url: jdbc:mysql://localhost:3306/conference_db?useSSL=false&serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8&useTimezone=true&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.jdbc.Driver
+    # 解决长时间不操作数据库重连失败
+    hikari:
+      max-lifetime: 60000
+
+#spring:
+#  datasource:
+#    username: root
+#    password: root
+#    url: jdbc:mysql://localhost:3306/conference_db?useSSL=false&serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8&useTimezone=true&allowPublicKeyRetrieval=true
+#    driver-class-name: com.mysql.jdbc.Driver
+#    type: com.alibaba.druid.pool.DruidDataSource # 自定义数据源为druid
+
+
+    #druid 数据源专有配置
+#    initialSize: 5
+#    minIdle: 5
+#    maxActive: 20
+#    maxWait: 60000
+#    timeBetweenEvictionRunsMillis: 60000
+#    minEvictableIdleTimeMillis: 300000
+#    validationQuery: SELECT 1 FROM DUAL
+#    testWhileIdle: true
+#    testOnBorrow: false
+#    testOnReturn: false
+#    poolPreparedStatements: true
+#
+#    #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
+#    filters: stat,wall,log4j
+#    maxPoolPreparedStatementPerConnectionSize: 20
+#    useGlobalDataSourceStat: true
+#    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500

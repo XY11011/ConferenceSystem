@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.PaperMapper">
+    <select id="selectMyPaperByConference" parameterType="map" resultType="Paper">
+        select * from paper where user_id=#{userId} and confer_id = #{conferId} ORDER BY date DESC
+    </select>
+
+    <select id="selectReviewByPaper" parameterType="int" resultType="ReviewedPaperVo">
+        select reviewer_id,username,review_state,rank,comment
+        from paper_distri join reviewer on reviewer_id = reviewer.id
+        where paper_id = #{paperId}
+        and review_state = 1
+    </select>
+    <!--  添加论文-->
+    <insert id="addPaper" parameterType="Paper">
+        insert into paper(user_id, confer_id, date, author, title, paper_abstract, keywords, location, distri_state, pass_state)
+        values (#{user_id}, #{confer_id}, #{date},#{author},#{title},#{paper_abstract},#{keywords},#{location},#{distri_state},#{pass_state});
+    </insert>
+</mapper>

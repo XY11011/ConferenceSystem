@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+    <link th:href="@{/css/conference.css}" rel="stylesheet"/>
+    <style>
+        .model-backdrop{
+            z-index:0;
+        }
+    </style>
+</head>
+<body>
+
+<!--顶部栏-new-->
+<div th:fragment="header_new" class="nav navbar-fixed-top" style="background-color: rgb(48 65 86);height: 50px">
+    <div class="row ">
+        <div class="nav navbar-nav navbar-left row-title row-center">
+            <a href="/allConference" style="color: #ffffff;font-size: 25px;text-decoration: none;" title="首页"><b>CONFERENCE</b></a>
+        </div>
+
+<!--        当前用户未登录-->
+        <div class="nav navbar-nav navbar-right row-title row-center" th:if="${role}==3">
+            <a href="/login" style="background-color: #304156;color: #ffffff;font-size: 18px;text-decoration: none;">登录</a>
+        </div>
+
+        <div class="nav navbar-nav navbar-right row-title row-center" th:if="${role}!=3">
+            <a href="#" class="dropdown-toggle a-none" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+               style="background-color: #304156;color: #ffffff;font-size: 18px;text-decoration: none;">[[${username}]] <span class="caret"></span></a>
+            <!--            用户的-->
+            <ul class="dropdown-menu" th:if="${role}==0">
+                <li><a href="" id="personCenter" data-toggle="modal" data-target="#myModal">个人主页</a></li>
+                <li><a href="" id="changePwd" data-toggle="modal" data-target="#myModal2">修改密码</a></li>
+                <li><a href="/logOut">退出</a></li>
+            </ul>
+            <!--            审稿人的-->
+            <ul class="dropdown-menu" th:if="${role}==1">
+                <li><a href="" id="personCenter2" data-toggle="modal" data-target="#myModal3">个人主页</a></li>
+                <li><a href="" id="changePwd2" data-toggle="modal" data-target="#myModal4">修改密码</a></li>
+                <li><a href="/logOut">退出</a></li>
+            </ul>
+            <!--            会议发布者的-->
+            <ul class="dropdown-menu" th:if="${role}==2">
+                <li><a href="" id="personCenter3" data-toggle="modal" data-target="#myModal5">个人主页</a></li>
+                <li><a href="" id="changePwd3" data-toggle="modal" data-target="#myModal6">修改密码</a></li>
+                <li><a href="/logOut">退出</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!--如果登录角色是用户-->
+<div th:fragment="model_user" th:if="${role}==0">
+    <!-- 只有用户已登录了才能弹出来用户的个人信息的模态框 -->
+    <div>
+        <div class="modal fade" id="myModal" tabindex="10" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">User Profile</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.username}" name="username" readonly="readonly"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">名字</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="name" th:value="${user.name}" class="layui-input"
+                                           lay-verify="name">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮箱</label>
+                                <div class="layui-input-block">
+                                    <input type="email" name="email" th:value="${user.email}" class="layui-input"
+                                           lay-verify="email">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*性别</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="sex" value="0" title="男" th:checked="${user.gender}==0">
+                                    <input type="radio" name="sex" value="1" title="女" th:checked="${user.gender}==1">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="padding-left: 0px">出生日期</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.birthday}" class="layui-input" id="birthday"
+                                           name="birthday">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="padding-left: 0px">教育程度</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.education}" class="layui-input" id="education"
+                                           name="education">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="padding-left: 0px">所在城市</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.city}" class="layui-input" id="city" name="city">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="padding-left: 0px">所在机构</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.institution}" class="layui-input" id="institution"
+                                           name="institution">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" lay-submit lay-filter="formDemo">Save
+                                        changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 只有用户已登录了才能弹出来用户的修改密码的模态框 -->
+    <div>
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel2">Change Password</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.username}" name="username" readonly="readonly"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*原密码</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="orginalPwd" class="layui-input" required
+                                           lay-verify="orginalPwd">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*新密码</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="newPwd" id="newPwd" class="layui-input" required
+                                           lay-verify="newPwd">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*确认新密码</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="qrnewPwd" class="layui-input" required
+                                           lay-verify="qrnewPwd">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" lay-submit lay-filter="formDemo2">Save
+                                        changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--如果登录角色是评审人-->
+<div th:fragment="model_reviewer" th:if="${role}==1">
+    <!-- 只有评审人已登录了才能弹出来评审人的个人信息的模态框 -->
+    <div>
+        <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel3">Reviewer Profile</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.username}" name="username" readonly="readonly"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">名字</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="name" th:value="${user.name}" class="layui-input"
+                                           lay-verify="name">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮箱</label>
+                                <div class="layui-input-block">
+                                    <input type="email" name="email" th:value="${user.email}" class="layui-input"
+                                           lay-verify="email">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" lay-submit lay-filter="formDemo3">Save
+                                        changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 只有评审人已登录了才能弹出来评审人的修改密码的模态框 -->
+    <div>
+        <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel4">Change Password</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:value="${user.username}" name="username" readonly="readonly"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*原密码</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="orginalPwd" class="layui-input" required
+                                           lay-verify="orginalPwd">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*新密码</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="newPwd" id="newPwd" class="layui-input" required
+                                           lay-verify="newPwd">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">*确认新密码</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="qrnewPwd" class="layui-input" required
+                                           lay-verify="qrnewPwd">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" lay-submit lay-filter="formDemo4">Save
+                                        changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+</body>
+</html>

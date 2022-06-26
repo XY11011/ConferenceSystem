@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ReviewerMapper">
+    <!--  通过username查找用户-->
+    <select id="queryReviewerByUsername" parameterType="String" resultType="Reviewer">
+        select *
+        from reviewer
+        where username = #{username};
+    </select>
+
+    <!--  添加审稿人-->
+    <insert id="addReviewer" parameterType="Reviewer">
+        insert into reviewer(username, password, email,name)
+        values (#{username}, #{password}, #{email},#{name})
+    </insert>
+
+    <!--    更新审稿人个人信息-->
+    <update id="updateReviewerInfo" parameterType="Reviewer">
+        update reviewer
+        set email=#{email},name=#{name}
+        where username = #{username}
+    </update>
+
+    <!--    更新审稿人密码-->
+    <update id="updateReviewerPwd" parameterType="Reviewer">
+        update reviewer
+        set password=#{password}
+        where username = #{username}
+    </update>
+</mapper>

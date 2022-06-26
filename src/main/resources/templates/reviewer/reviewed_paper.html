@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>评审论文</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+    <link th:href="@{/css/conference.css}" rel="stylesheet"/>
+    <script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+    <style>
+        .row{
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部栏-->
+<div th:replace="~{common/common :: header_new}"></div>
+<div th:replace="~{common/common :: model_user}"></div>
+<div th:replace="~{common/common :: model_reviewer}"></div>
+<div style="height: 50px"></div>
+<div class="container-fluid container-body row-center" style="height:50px" >
+    <h3 style="padding-left: 10px">Welcome! [[${username}]]</h3>
+</div>
+
+<!--顶部导航栏-->
+<div class="container-fluid container-body" th:insert="~{reviewer/common :: top_bar(active='reviewed_paper.html')}"></div>
+<!--内容-->
+<div class="container-fluid container-body">
+    <div th:if="not ${#lists.isEmpty(pageInfo.list)}">
+        <!--  已评审论文-->
+        <div class="paper-item" style="margin-top: 20px">
+            <div th:each="paper : ${pageInfo.list}" class="panel panel-default paper-left-label">
+                <div class="panel-body">
+                    <div class="row">
+                        <div style="float:left"><b style="color:#2a89a6;font-size:18px">[[${paper.title}]]</b></div>
+                        <div style="float:right">
+                            <a class="glyphicon glyphicon-save" href="#" th:onclick="downloadFile([[${paper.location}]])" style="text-decoration:none;color: #337ab7;font-size: 20px"></a>
+                            <a class="glyphicon glyphicon-edit"  style="margin-left: 10px;text-decoration:none;color: #337ab7;font-size: 20px " th:onclick="openModel([[${paper.id}]],[[${paper.rank}]],[[${paper.comment}]])"></a>
+<!--                            <button class="glyphicon glyphicon-edit" aria-hidden="true" style="border-style:none;background-color: "></button>-->
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;font-size: 16px">
+                        <p><b style="color:#34a5c9;margin-right: 5px">Authors:</b>[[${paper.author}]]</p>
+                    </div>
+                    <div class="row" style="margin-top: 10px">
+                        <textarea class="col-lg-10" style="height: 100px;margin-left: 20px;border-color:#e5e5e5;padding-top: 10px;line-height: 1.5" readonly>[[${paper.paper_abstract}]]</textarea>
+                    </div>
+                    <div class="row" style="margin-top: 5px;font-size: 16px">
+                        <div th:switch="${paper.rank}">
+                            <b style="margin-right: 5px">Rank:</b>
+                            <span th:case="0" style="color: #1bb61c;font-size: 18px;font-weight: bold">Excellent</span>
+                            <span th:case="1" style="color: #066998;font-size: 18px;font-weight: bold">Better</span>
+                            <span th:case="2" style="color: #c5a920;font-size: 18px;font-weight: bold">Ordinary</span>
+                            <span th:case="3" style="color: #c02c2c;font-size: 18px;font-weight: bold">Worse</span>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;font-size: 16px"> <b>Comments:</b></div>
+                    <div class="row" style="margin-top: 10px">
+                        <textarea class="col-lg-10" style="height: 35px;margin-left: 20px;border-color:#e5e5e5;padding-top: 10px;line-height: 1.5" readonly>[[${paper.comment}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div th:if="${#lists.isEmpty(pageInfo.list)}">
+        <div class="container-fluid container-body" style="text-align: center;margin-top: 20px;font-size: 20px">未找到相关内容</div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Update Review</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="display: none" id="paperId"></div>
+                    <input type="hidden" id="paper_id">
+                    <form>
+                        <div class="form-group">
+                            <label>Rank:</label>
+                            <label style="margin-left: 15px">
+                                <input type="radio" name="rank" id="option0" value="0" checked> Excellent
+                            </label>
+                            <label style="margin-left: 15px">
+                                <input type="radio" name="rank" id="option1" value="1"> Better
+                            </label>
+                            <label style="margin-left: 15px">
+                                <input type="radio" name="rank" id="option2" value="2"> Ordinary
+                            </label>
+                            <label style="margin-left: 15px">
+                                <input type="radio" name="rank" id="option3" value="3"> Worst
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment" class="control-label">Comment:</label>
+                            <textarea class="form-control" id="comment" style="height: 200px"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateReview()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--页码-->
+<div style="height:50px"></div>
+<div th:insert="~{reviewer/common :: nav-page}"></div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/reviewer.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script>
+    function openModel(id,rank,comment){
+        // console.log("进来了");
+        $("#myModal").modal('show');
+        //显示原有数据
+        $('#paper_id').text(id);
+        $('#comment').text(comment);
+
+        if(rank===0){
+            $('#option0').prop("checked",'checked');
+        }else if(rank===1){
+            $('#option1').prop("checked",'checked');
+        }else if(rank===2){
+            $('#option2').prop("checked",'checked');
+        }else{
+            $('#option3').prop("checked",'checked');
+        }
+        // console.log(val);
+        // console.log($('#paper_id').text());
+    }
+    function updateReview(){
+        console.log("进来了");
+        let rank = $("input[name=rank]:checked").val()
+        let comment = $('#comment').val();
+        let paper_id = $('#paper_id').text();
+        console.log("paper_id"+paper_id);
+        console.log(rank);
+        $.ajax({
+            type: "post",
+            url: "/updateReview",
+            data: JSON.stringify({
+                id:paper_id,
+                rank:rank,
+                comment:comment
+            }),
+            dataType: "json",
+            contentType : 'application/json;charset=utf-8',
+            success: function(data){
+                console.log(data)
+                console.log("成功了");
+                $("#myModal").modal('hide');
+                window.location.reload();
+            }
+        });
+
+    }
+</script>
+</body>
+</html>

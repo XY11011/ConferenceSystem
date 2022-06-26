@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.PaperManageMapper">
+    <!--根据会议名和论文名查找论文-->
+    <select id="queryUndistriPaperBySearch" resultType="com.example.demo.pojo.Paper">
+        select * from paper where distri_state = 0 and confer_id = #{confer_id} and (title like concat('%', #{paperTitle}, '%'))
+    </select>
+    <!--根据会议名和论文名查找论文（未指定会议情况下）-->
+    <select id="queryUndistriPaperBySearchPaperTitle" resultType="com.example.demo.pojo.Paper">
+        select * from paper where distri_state = 0 and (title like concat('%', #{paperTitle}, '%'))
+    </select>
+    <!--根据会议名查找会议信息-->
+    <select id="queryConferenceBySearchTitle" resultType="com.example.demo.pojo.Conference">
+        select * from conference where title = #{title}
+    </select>
+    <!--根据发布者ID查找会议信息-->
+    <select id="queryConferenceByAnnouncerId" resultType="com.example.demo.pojo.Conference">
+        select * from conference where announcer_id = #{announcer_id}
+    </select>
+    <!--根据论文ID查询论文信息-->
+    <select id="queryPaperById" resultType="com.example.demo.pojo.Paper">
+        select * from paper where id = #{id}
+    </select>
+    <!--查找所有的审稿人信息-->
+    <select id="queryAllReviewer" resultType="com.example.demo.pojo.Reviewer">
+        select * from reviewer
+    </select>
+    <!--添加论文分配信息-->
+    <insert id="createPaperDistri" parameterType="com.example.demo.pojo.Paper_distri">
+        insert into paper_distri(paper_id,reviewer_id,confer_id,review_state) values(#{paper_id},#{reviewer_id},#{confer_id},#{review_state})
+    </insert>
+    <!--分配审稿人后修改论文分配状态-->
+    <update id="updatePaperDistriState" parameterType="com.example.demo.pojo.Paper">
+        update paper set distri_state=1 where id=#{id}
+    </update>
+
+
+    <!--根据会议名和论文名查找论文——已分配论文-->
+    <select id="queryDistributedPaperBySearch" resultType="com.example.demo.pojo.Paper">
+        select * from paper where distri_state = 1 and confer_id = #{confer_id} and (title like concat('%', #{paperTitle}, '%'))
+    </select>
+    <!--根据会议名和论文名查找论文（未指定会议情况下）——已分配论文-->
+    <select id="queryDistributedPaperBySearchPaperTitle" resultType="com.example.demo.pojo.Paper">
+        select * from paper where distri_state = 1 and (title like concat('%', #{paperTitle}, '%'))
+    </select>
+    <!--录用论文后修改状态-->
+    <update id="acceptPaper" parameterType="com.example.demo.pojo.Paper">
+        update paper set pass_state=1 where id=#{id}
+    </update>
+    <!--退回论文后修改状态-->
+    <update id="refusePaper" parameterType="com.example.demo.pojo.Paper">
+        update paper set pass_state=2 where id=#{id}
+    </update>
+</mapper>

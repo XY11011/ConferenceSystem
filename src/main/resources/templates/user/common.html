@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网站首页公共页面</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+
+</head>
+<body>
+
+<!--顶部导航栏 reviewer-->
+<div class="top_bar container-fluid" th:fragment="top_bar" style="background-color: rgb(2 109 155); border-bottom-width: 0px">
+    <nav class="container-fluid">
+        <div th:if="${role}==0">
+            <ul class="nav nav-tabs navbar-left" style="margin-top: 8px;font-size: 16px">
+                <li role="presentation" th:class="${active=='conference_my.html'?'nav-li-active' : 'nav-li'}">
+                    <a th:class="${active=='conference_my.html'?'nav-active' : 'nav-none'}" href="/myConference" >My Conferences</a>
+                </li>
+                <li role="presentation" th:class="${active=='conference_all.html'?'nav-li-active' : 'nav-li'}" style="margin-left: 10px">
+                    <a th:class="${active=='conference_all.html'?'nav-active' : 'nav-none'}" href="/allConference">All Conferences</a>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${role}==3">
+            <ul class="nav nav-tabs navbar-left" style="margin-top: 8px;font-size: 16px">
+                <li role="presentation" class="nav-li" >
+                    <a  href="#" class="nav-none" onclick="showLoginModel()">My Conferences</a>
+                </li>
+                <li role="presentation" th:class="${active=='conference_all.html'?'nav-li-active' : 'nav-li'}" style="margin-left: 10px">
+                    <a th:class="${active=='conference_all.html'?'nav-active' : 'nav-none'}" href="/allConference">All Conferences</a>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${role}==1 or ${role}==2">
+            <ul class="nav nav-tabs navbar-left" style="margin-top: 8px;font-size: 16px">
+                <li role="presentation" class="nav-li " disabled>
+                    <a class="nav-none" style="cursor:not-allowed;" >My Conferences</a>
+                </li>
+                <li role="presentation" th:class="${active=='conference_all.html'?'nav-li-active' : 'nav-li'}" style="margin-left: 10px">
+                    <a th:class="${active=='conference_all.html'?'nav-active' : 'nav-none'}" href="/allConference">All Conferences</a>
+                </li>
+            </ul>
+        </div>
+        <form class="navbar-form navbar-right" th:action="${active=='conference_my.html'?'search_myConference' : 'search_allConference'}"
+               method="post"  style="margin-top: 10px">
+            <div class="form-group">
+                    <input type="text" name="title" id="title" class="form-control" placeholder="conference to filter..." style="border-radius: 20px" th:value="${title}">
+                <button type="submit" class="btn btn-default" style="display: none"></button>
+            </div>
+        </form>
+    </nav>
+</div>
+
+<!--分页-页码-->
+<div th:fragment="nav-page">
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container-fluid">
+            <div class="col-md-4" style="margin-top: 16px;text-align: left">
+                当前第[[${pageInfo.pageNum}]]页，共[[${pageInfo.pages}]]页，[[${pageInfo.total}]]条记录
+            </div>
+            <div class="col-md-8" style="text-align: right;height:50px">
+                <ul class="pagination" id="navPage" style="margin-top: 10px">
+                    <!--   首页-->
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Previous" th:onclick="pageSearch([[${href}]],'1')">
+                            <span aria-hidden="true">首页</span>
+                        </a>
+                    </li>
+                    <!--   如果现在的页面没有上一页 则禁用链接 否则不禁用-->
+                    <li th:class="${pageInfo.hasPreviousPage}?'':disabled">
+<!--                        <a th:href="${pageInfo.hasPreviousPage}?-->
+<!--                                  @{ ${href}+'?pageNum='+ ${pageInfo.prePage} } :-->
+<!--                                  @{ ${href}+'?pageNum=1' }" aria-label="Previous"-->
+<!--                           th:onclick="pageSearch([[${href}]],'1')">-->
+                        <a href="javascript:void(0)" th:if="${pageInfo.hasPreviousPage}" th:onclick="pageSearch([[${href}]],[[${pageInfo.prePage}]])">
+                            <span aria-hidden="true">上一页</span>
+                        </a>
+                        <a href="javascript:void(0)" th:if="${not pageInfo.hasPreviousPage}" th:onclick="pageSearch([[${href}]],'1')">
+                            <span aria-hidden="true">上一页</span>
+                        </a>
+                    </li>
+                    <!-- 中间页 并给当前页码设置样式active-->
+                    <li th:each="pageNum: ${pageInfo.navigatepageNums}" th:class="${pageNum eq pageInfo.pageNum}?'active':''">
+                        <a href="javascript:void(0)" th:text="${pageNum}"  th:onclick="pageSearch([[${href}]],[[${pageNum}]])"></a>
+                    </li>
+                    <!-- 如果现在的页面没有下一页 则禁用链接 否则不禁用-->
+                    <li th:class="${pageInfo.hasNextPage}?'':disabled" id="com_page">
+                        <a href="javascript:void(0)" aria-label="Next"
+                           th:if="${pageInfo.hasNextPage}" th:onclick="pageSearch([[${href}]],[[${pageInfo.nextPage}]])">
+                            <span aria-hidden="true">下一页</span>
+                        </a>
+                        <a href="javascript:void(0)" aria-label="Next"
+                           th:if="${not pageInfo.hasNextPage}" th:onclick="pageSearch([[${href}]],[[${pageInfo.pages}]])">
+                            <span aria-hidden="true">下一页</span>
+                        </a>
+                    </li>
+                    <!--  尾页-->
+                    <li>
+                        <a href="javascript:void(0)" th:onclick="pageSearch([[${href}]],[[${pageInfo.pages}]])">
+                            <span aria-hidden="true">尾页</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div th:fragment="nav-page-paper">
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container-fluid">
+            <div class="col-md-4" style="margin-top: 16px;text-align: left">
+                当前第[[${pageInfo.pageNum}]]页，共[[${pageInfo.pages}]]页，[[${pageInfo.total}]]条记录
+            </div>
+            <div class="col-md-8" style="text-align: right;height:50px">
+                <ul class="pagination" id="navPage1" style="margin-top: 10px">
+                    <!--   首页-->
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Previous" th:onclick="pageSearchPaper([[${href}]],'1')">
+                            <span aria-hidden="true">首页</span>
+                        </a>
+                    </li>
+                    <!--   如果现在的页面没有上一页 则禁用链接 否则不禁用-->
+                    <li th:class="${pageInfo.hasPreviousPage}?'':disabled">
+                        <!--                        <a th:href="${pageInfo.hasPreviousPage}?-->
+                        <!--                                  @{ ${href}+'?pageNum='+ ${pageInfo.prePage} } :-->
+                        <!--                                  @{ ${href}+'?pageNum=1' }" aria-label="Previous"-->
+                        <!--                           th:onclick="pageSearch([[${href}]],'1')">-->
+                        <a href="javascript:void(0)" th:if="${pageInfo.hasPreviousPage}" th:onclick="pageSearchPaper([[${href}]],[[${pageInfo.prePage}]])">
+                            <span aria-hidden="true">上一页</span>
+                        </a>
+                        <a href="javascript:void(0)" th:if="${not pageInfo.hasPreviousPage}" th:onclick="pageSearchPaper([[${href}]],'1')">
+                            <span aria-hidden="true">上一页</span>
+                        </a>
+                    </li>
+                    <!-- 中间页 并给当前页码设置样式active-->
+                    <li th:each="pageNum: ${pageInfo.navigatepageNums}" th:class="${pageNum eq pageInfo.pageNum}?'active':''">
+                        <a href="javascript:void(0)" th:text="${pageNum}"  th:onclick="pageSearchPaper([[${href}]],[[${pageNum}]])"></a>
+                    </li>
+                    <!-- 如果现在的页面没有下一页 则禁用链接 否则不禁用-->
+                    <li th:class="${pageInfo.hasNextPage}?'':disabled" id="com_page">
+                        <a href="javascript:void(0)" aria-label="Next"
+                           th:if="${pageInfo.hasNextPage}" th:onclick="pageSearchPaper([[${href}]],[[${pageInfo.nextPage}]])">
+                            <span aria-hidden="true">下一页</span>
+                        </a>
+                        <a href="javascript:void(0)" aria-label="Next"
+                           th:if="${not pageInfo.hasNextPage}" th:onclick="pageSearchPaper([[${href}]],[[${pageInfo.pages}]])">
+                            <span aria-hidden="true">下一页</span>
+                        </a>
+                    </li>
+                    <!--  尾页-->
+                    <li>
+                        <a href="javascript:void(0)" th:onclick="pageSearchPaper([[${href}]],[[${pageInfo.pages}]])">
+                            <span aria-hidden="true">尾页</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+</body>
+</html>

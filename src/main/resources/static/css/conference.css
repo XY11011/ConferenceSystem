@@ -1,0 +1,34 @@
+.confer-center{
+    /*flex布局*/
+    display: flex;
+    /*垂直居中*/
+    align-items: center;
+    /*水平居中*/
+    justify-content: center;
+}
+.paper-list{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.paper-left-label{
+    border-left-width: 7px;
+    border-left-color: rgb(2 109 155);
+}
+
+.paper-title-label{
+    color: #5C5B5B;
+    font-size: 18px;
+    font-weight:bold;
+}
+
+.paper-content{
+    color:#999999;
+    font-size: 16px;
+    font-weight:bold;
+}
+
+.comment-panel{
+    border-radius: 25px;
+    box-shadow: 0 5px rgb(0 0 0 / 5%);
+}

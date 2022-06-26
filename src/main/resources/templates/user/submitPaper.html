@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>提交论文页面</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <style>
+        .submitContent {
+            margin-top: 15px;
+            margin-left: 50px;
+            margin-right: 3px;
+        }
+
+        .big_title {
+            height: 50px;
+            line-height: 50px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .small_title {
+            height: 35px;
+            line-height: 35px;
+            background-color: #f2f2f2;
+            padding-left: 2px;
+            font-weight: bold;
+        }
+
+        .remark {
+            height: 20px;
+            line-height: 25px;
+            margin-bottom: 10px;
+        }
+
+        .contentFrame {
+            width: 45%;
+            background-color: #f8fbfc;
+            padding-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 17px;
+            margin-bottom: 20px;
+        }
+
+        .author {
+            height: 20px;
+            line-height: 20px;
+        }
+
+        .label_title {
+            float: left;
+            width: 110px;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .input_class {
+            width: 70%;
+            height: 30px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部栏-->
+<div th:replace="~{common/common :: header_new}"></div>
+<div th:replace="~{common/common :: model_user}"></div>
+<div th:replace="~{common/common :: model_reviewer}"></div>
+<div style="height: 50px"></div>
+<div>
+    <div class="submitContent">
+        <input th:value="${conferId}" id="conferId" hidden/>
+        <div class="big_title">Create a new submission</div>
+        <form class="layui-form" action="">
+            <!--            作者信息-->
+            <div class="small_title">
+                Author Information
+            </div>
+            <div class="remark">
+                At least <b>one author.</b>
+            </div>
+            <div class="contentFrame">
+                <div class="author">
+                    Author1
+                </div>
+                <div>
+                    <div class="label_title">
+                        <label style="color: red">*</label> <label style="color: #a5a8aa; font-size: 13px">Author
+                        name</label>
+                    </div>
+                    <input type="text" class="input_class" name="author1" required lay-verify="author1">
+                </div>
+                <div class="author">
+                    Author2
+                </div>
+                <div>
+                    <div class="label_title">
+                        <label style="color: red">*</label> <label style="color: #a5a8aa; font-size: 13px">Author
+                        name</label>
+                    </div>
+                    <input type="text" class="input_class" name="author2">
+                </div>
+                <div class="author">
+                    Author3
+                </div>
+                <div>
+                    <div class="label_title">
+                        <label style="color: red">*</label> <label style="color: #a5a8aa; font-size: 13px">Author
+                        name</label>
+                    </div>
+                    <input type="text" class="input_class" name="author3">
+                </div>
+            </div>
+            <!--            标题和摘要-->
+            <div class="small_title">
+                Title and Abstract
+            </div>
+            <div class="remark">
+                The title and the abstract should be entered as plain text, they should not contain HTML elements.
+            </div>
+            <div class="contentFrame">
+                <div style="margin-bottom: 15px">
+                    <div class="label_title">
+                        <label style="color: red">*</label> <label style="color: #a5a8aa; font-size: 13px">Title</label>
+                    </div>
+                    <input type="text" class="input_class" name="title" required lay-verify="title">
+                </div>
+                <div>
+                    <div class="label_title">
+                        <label style="color: red">*</label> <label
+                            style="color: #a5a8aa; font-size: 13px">Abstract</label>
+                    </div>
+                    <textarea class="input_class" style="height: 190px;resize: none" name="abstract" required
+                              lay-verify="abstract"></textarea>
+                </div>
+
+            </div>
+            <!--            关键字-->
+            <div class="small_title">
+                Keywords
+            </div>
+            <div class="remark">
+                Type a list of keywords(also known as key phrases or key terms), <b>one per line</b> to characterize
+                your submission. You should specify at least three keywords.
+            </div>
+            <div class="contentFrame">
+                <div>
+                    <div class="label_title">
+                        <label style="color: red">*</label> <label
+                            style="color: #a5a8aa; font-size: 13px">Keywords</label>
+                    </div>
+                    <textarea class="input_class" style="height: 150px;resize: none" name="keywords" required
+                              lay-verify="keywords"></textarea>
+                </div>
+            </div>
+            <!--            文件-->
+            <div class="small_title">
+                Files
+            </div>
+            <div class="contentFrame">
+                <div style="width: 90%; margin-left: 25px">
+                    <div style="margin-top: 40px;padding-top: 17px;margin-bottom: 18px; border-top: 1px solid #ccc;color: #838a90;font-size: 15px">
+                        <b>Paper. </b>Upload your paper. The paper must be in PDF format
+                    </div>
+                    <!--                    <form method="post"-->
+                    <!--                          action="/upload/paper" enctype="multipart/form-data">-->
+                    <input type="file" required lay-verify="filePath" name="file" id="file">
+                    <input type="button" value="提交" onclick="submit_paper()" style="margin-top: 5px"/>
+                    <!--                    </form>-->
+
+                </div>
+            </div>
+
+            <div style="height: 30px;line-height: 30px;font-size: 16px"><b>Ready?</b></div>
+            <div style="height: 20px;line-height: 20px;margin-bottom: 10px">
+                If you filed out the form, press the 'Submit' button below.
+            </div>
+            <button type="submit" class="layui-btn"
+                    style="width: 140px;height: 33px;line-height:33px;border-radius: 5px;margin-bottom: 30px;;background-color: rgb(2 109 155)"
+                    lay-submit lay-filter="formDemo">Submit
+            </button>
+        </form>
+    </div>
+
+</div>
+<script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script>
+    var filePath = "";
+
+    // 上传论文文件
+    function submit_paper() {
+        console.log('111')
+        // console.log($("#file")[0].files[0])
+        var formdata = new FormData();
+        formdata.append('file', $("#file")[0].files[0]);
+        console.log(formdata.get('file'));
+        $.ajax({
+            type: "POST",
+            url: "/upload/paper",  //路径
+            data: formdata,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log('data' + data);
+                if (data == "0") {
+                    layer.msg('上传失败')
+                } else if (data == "1") {
+                    layer.msg('上传文件为空')
+                } else {
+                    // console.log(data);
+                    layer.msg('上传成功');
+                    filePath = data;
+                    console.log(filePath)
+                }
+
+            }
+        })
+    }
+
+    layui.use(['form', 'layer', 'jquery'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery;
+        // 验证表单
+        form.verify({
+            author1: function (value) {
+                if (value.length == 0) {
+                    return '第一作者不能为空';
+                }
+            },
+            title: function (value) {
+                if (value.length == 0) {
+                    return '论文标题不能为空';
+                }
+            },
+            abstract: function (value) {
+                if (value.length == 0) {
+                    return '论文摘要不能为空';
+                }
+            },
+            keywords: function (value) {
+                if (value.length == 0) {
+                    return '论文关键字不能为空';
+                }
+            },
+            filePath: function (value) {
+                if (value.length == 0) {
+                    return '请上传论文';
+                } else if (filePath == '') {
+                    return '请记得点击提交论文~';
+                }
+            }
+
+        })
+
+        // 监听提交
+        form.on('submit(formDemo)', function (data) {
+            console.log('成功提交表单')
+            var pasParam = data.field;
+            console.log(pasParam)
+            pasParam.path = filePath;
+            pasParam.conferId = $("#conferId").val();
+            $.ajax({
+                type: "POST",
+                url: "/checkSubmitPaper",  //路径
+                data: pasParam,
+                success: function (data) {
+                    if (data == 1) {
+                        layer.alert('论文提交成功', function () {
+                            // 跳到对应的会议详情页
+                            // 这里暂定为回到主页
+                            window.location = '/'
+                        })
+                    }else{
+                        layer.alert('论文提交失败，请重新尝试',{icon:5});
+                    }
+                }
+            })
+            return false;
+        })
+
+
+    });
+
+</script>
+</body>
+</html>

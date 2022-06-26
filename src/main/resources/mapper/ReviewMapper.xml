@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ReviewMapper">
+
+    <select id="getReviewedPaper" parameterType="int" resultType="map">
+        select *
+        from paper_distri join paper
+        on paper_distri.paper_id = paper.id
+        where 1=1
+        and (review_state = 1)
+        and (reviewer_id = #{reviewerId})
+    </select>
+
+    <select id="getUnReviewedPaper" parameterType="int" resultType="map">
+        select *
+        from paper_distri join paper
+                               on paper_distri.paper_id = paper.id
+        where reviewer_id = #{reviewerId}
+          and review_state = 0
+    </select>
+
+    <select id="searchReviewedPaperByTitle" parameterType="map" resultType="map">
+        select *
+        from paper_distri join paper
+        on paper_distri.paper_id = paper.id
+        where reviewer_id = #{reviewerId}
+          and review_state = 1
+          and (title like concat('%', #{title}, '%') or #{title} is null)
+    </select>
+
+    <select id="searchUnReviewedPaperByTitle" parameterType="map" resultType="map">
+        select *
+        from paper_distri join paper
+        on paper_distri.paper_id = paper.id
+        where reviewer_id = #{reviewerId}
+          and review_state = 0
+          and (title like concat('%', #{title}, '%') or #{title} is null)
+    </select>
+
+    <update id="addComment" parameterType="map">
+        update paper_distri
+        set rank=#{rank},
+            comment=#{comment},
+            review_state = 1
+        where id = #{id}
+    </update>
+
+    <update id="updateComment" parameterType="map">
+        update paper_distri
+        set rank=#{rank},
+            comment=#{comment}
+        where id = #{id}
+    </update>
+</mapper>

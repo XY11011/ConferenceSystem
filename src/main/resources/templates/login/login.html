@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <link th:href="@{/css/login.css}" rel="stylesheet"/>
+</head>
+<body>
+<div>
+    <div class="leaderLogin">
+        <form action="" class="content layui-form">
+        <div class="row">
+            <div style="color: #85c1ff;font-size: 22px;font-weight: bold;text-align: center;float: left;margin-left: 115px;">
+                登录页面
+            </div>
+            <div style="float:right;margin-right: 25px;font-size: 14px;">
+                <a href="/register" style="color: #9e9a9a">注册</a>
+            </div>
+        </div>
+        <div class="row layui-form-item">
+            <div class="col-xs-12">
+                <select name="role" id="role" class="form-control" style="height: 40px;line-height: 40px" lay-verify="role">
+                    <option value="">请选择要登录的角色</option>
+                    <option value="0">用户</option>
+                    <option value="1">审稿人</option>
+                    <option value="2">会议发布者</option>
+                </select>
+            </div>
+        </div>
+        <div class="row layui-form-item">
+            <div class="col-xs-12">
+                <input type="text" id="username" class="layui-input" name="username" placeholder="请输入用户名"  lay-verify="username"
+                       style="background-image: url('/images/login/username.png'); background-repeat: no-repeat; padding:0 40px 0 40px;  background-position: 10px 10px;" >
+            </div>
+        </div>
+        <div class="row layui-form-item">
+            <div class="col-xs-12">
+                <input type="password" id="password" class="layui-input" name="password" placeholder="请输入密码"  lay-verify="password"
+                       style="background-image: url('/images/login/password.png'); background-repeat: no-repeat; padding:0 40px 0 40px;  background-position: 10px 10px;">
+                <span class="pas" required></span>
+                <!-- 是否显示密码的标志-->
+                <input type="hidden" id="showflag" value="1">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <button type="submit" class="layui-btn" id="loginBtn" lay-submit="" lay-filter="formDemo">登录</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    // 点击显示/隐藏密码内容
+    $(".pas").click(function () {
+        if ($("#showflag").val() == 1) {
+            $("#showflag").val("0");
+            $(this).css("background-image", "url(/images/login/open.png)");
+            $("#password").attr("type", "text");
+        } else {
+            $("#showflag").val("1");
+            $(this).css("background-image", "url(/images/login/close.png)");
+            $("#password").attr("type", "password");
+        }
+
+    })
+
+    layui.use(['form','layer'], function(){
+        var form = layui.form;
+        var layer = layui.layer;
+        // 验证表单
+        form.verify({
+            role: function (value) {
+                if (value.length == 0) {
+                    return '角色不能为空';
+                }
+            },
+            username: function (value) {
+                if (value.length == 0) {
+                    return '用户名不能为空';
+                }
+            },
+            password:function (value) {
+                if (value.length == 0) {
+                    return '密码不能为空';
+                }
+            }
+
+        })
+
+        // 监听提交
+        form.on('submit(formDemo)', function(data){
+            console.log('成功提交表单')
+            console.log(JSON.stringify(data.field))
+            $.ajax({
+                type: "POST",
+                // contentType: 'application/json',
+                url: "/checkLogin",  //路径
+                data: data.field,
+                // dataType: 'json',
+                success: function (data) {
+                    if(data==0){
+                        layer.alert('没有这样的用户')
+                    }
+                    if(data==1){
+                        layer.alert('密码不正确')
+                    }
+                    if(data==2){
+                        // 转至主页
+                        window.location='/'
+                    }
+                    if(data==3){
+                        // 转至审稿人管理页
+                        window.location='/reviewer'
+                    }
+                    if(data==4){
+                        // 转至会议发布者管理页
+                        window.location='/admin/home'
+                    }
+                }
+            })
+            return false;
+        })
+    });
+
+</script>
+</body>
+</html>

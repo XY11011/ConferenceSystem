@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>稿件管理</title>
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/font-awesome/css/font-awesome.min.css}"
+          href="/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/plugins/timepicker/bootstrap-timepicker.min.css}">
+    <!-- daterange picker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.css}">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/Ionicons/css/ionicons.min.css}"
+          href="/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/AdminLTE.min.css}" href="/adminLTE/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE 皮肤。默认使用蓝色皮肤。
+        您可以选择其他皮肤。皮肤样式写在 body 标签中，
+        以便使之生效。 -->
+    <link rel="stylesheet" th:href="@{/adminLTE/dist/css/skins/_all-skins.min.css}"
+          href="/adminLTE/dist/css/skins/_all-skins.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" th:href="@{/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}" href="/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!--layui样式-->
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="/layui/css/layui.css">
+    <!--jqueryComfirm样式-->
+    <link th:href="@{/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.css}" href="/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.css" rel="stylesheet">
+
+    <!--from conference_paper.html-->
+    <!--<link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.css}" rel="stylesheet"/>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">-->
+    <link th:href="@{/css/reviewer.css}" rel="stylesheet"/>
+    <link th:href="@{/css/conference.css}" rel="stylesheet"/>
+
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini">
+<div class="wrapper">
+
+    <!--------------------------------------------- 头部 ------------------------------------------>
+    <!--引入抽取的AdminLTEdemo-->
+    <!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+    <div th:replace="admin/AdminLTEdemo::main_header"></div>
+
+    <!-------------------------------------------- 左部侧边栏 ---------------------------------------------->
+    <div th:replace="admin/AdminLTEdemo::#main_sidebar(activeUri='paper_manage_undistri')"></div>
+
+    <!------------------------------------- 页面主体内容 -------------------------------------->
+    <div class="content-wrapper">
+        <!------- 头部 (页眉) ------->
+        <section class="content-header">
+            <h1>
+                稿件管理
+                <!--<small>欢迎您</small>-->
+            </h1>
+            <!-- 面包屑 -->
+            <ol class="breadcrumb">
+                <li><a href="/admin/home"><i class="fa fa-dashboard"></i>首页</a></li>
+                <li class="active">未分配稿件</li>
+            </ol>
+        </section>
+
+        <!------ 主体内容 ------>
+        <section class="content container-fluid">
+            <!-- .box-body -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">未分配稿件列表</h3>
+                </div>
+
+                <div class="box-body">
+
+                    <!-- 数据表格 -->
+                    <div class="table-box">
+
+                        <!--工具栏-->
+                        <div style="text-align: right;margin-right: 45px;">
+                            <div class="form-group form-inline">
+                                <select class="form-control" id="stype" name="stype">
+                                    <option value="0" selected>全部会议</option>
+                                    <option th:each="conference : ${conferenceInfo}" th:value="${conference.id}" th:text="${conference.title}"></option>
+                                </select>
+                                <input type="text" id="svalue" name="svalue" class="form-control"
+                                       placeholder="请输入论文标题"/>
+                                <div class="btn-group">
+                                    <button class="btn layui-bg-blue btn-search" id="search" name="search"
+                                            onclick="search()">查找
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--工具栏/-->
+
+                        <!--内容-->
+                        <div class="container-fluid">
+                            <div th:if="not ${#lists.isEmpty(paperPageInfo.list)}">
+                                <div  th:each="paper : ${paperPageInfo.list}" class="panel panel-default paper-left-label"  style="border-left-color: #3c8dbc;margin:5px 30px 30px 30px">
+                                    <div class="panel-body">
+                                        <div class="row row-center" style="margin-left: 5px;margin-right: 5px">
+                                            <div class="col-lg-10"><span style="font-size: 20px;color: #1E9FFF;"><b>[[${paper.title}]]</b></span></div>
+                                            <div class="col-lg-1"><a class="glyphicon glyphicon-save" style="font-size: 22px;text-align: right;text-decoration:none;color: #1E9FFF;" href="#" th:onclick="downloadFile([[${paper.location}]])"></a></div>
+                                            <div class="col-lg-1" style="font-size: 28px;margin-right: 20px;">
+                                                <div class="btn-group">
+                                                    <button class="btn layui-bg-blue btn-search" id="distribute" name="distribute"
+                                                            th:onclick="|clickDistribute(${paper.id})|">分配审稿人
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin:5px 5px">
+                                            <div class="col-lg-1 paper-title-label">作者:</div>
+                                            <div class="col-lg-10 paper-content" style="margin-left: 30px">[[${paper.author}]]</div>
+                                        </div>
+                                        <div class="row" style="margin:5px 5px">
+                                            <div class="col-lg-1 paper-title-label">关键词:</div>
+                                            <div class="col-lg-10 paper-content" style="margin-left: 30px">[[${paper.keywords}]]</div>
+                                        </div>
+                                        <div class="row" style="margin:10px 5px">
+                                            <div class="col-lg-1 paper-title-label">摘要:</div>
+                                            <textarea class="col-lg-10 paper-content" style="height:100px;border-color:#e5e5e5;padding-top: 5px;line-height: 1.5;margin-left: 30px" readonly>[[${paper.paper_abstract}]]</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.isEmpty(paperPageInfo.list)}" style="text-align: center">
+                                <div class="container-fluid container-body" style="text-align: center;margin-top: 20px;font-size: 20px">没有相关论文</div>
+                            </div>
+                        </div>
+
+                    <!--分页-->
+                    <div id="pagehelp" style="width: 50vw;margin: 10px auto;text-align: center;"></div>
+                </div>
+            </div>
+
+            <!--------------- 分配审稿人弹框 ---------------->
+            <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="addModalLabel">添加审稿人</h3>
+                        </div>
+                        <div class="modal-body">
+                            <!--注意需要一个隐藏域的id用来传值-->
+                            <div class="form-group">
+                                <input type="hidden" id="id" name="id" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" id="conference_id" name="conference_id" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="title">论文标题</label>
+                                <input readonly type="text" id="title" name="title" class="form-control" placeholder="论文标题">
+                            </div>
+                            <div class="form-group">
+                                <label for="abstract">论文摘要</label>
+                                <textarea readonly name="abstract" id="abstract" class="form-control" rows="3" placeholder="论文摘要"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewer1">请分配审稿人1</label>
+                                <select class="form-control" id="reviewer1" name="reviewer1">
+                                    <option value="0" selected>请选择审稿人</option>
+                                    <option th:each="reviewer : ${reviewerList}" th:value="${reviewer.id}" th:text="${reviewer.name}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewer2">请分配审稿人2</label>
+                                <select class="form-control" id="reviewer2" name="reviewer2">
+                                    <option value="0" selected>请选择审稿人</option>
+                                    <option th:each="reviewer : ${reviewerList}" th:value="${reviewer.id}" th:text="${reviewer.name}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewer3">请分配审稿人3</label>
+                                <select class="form-control" id="reviewer3" name="reviewer3">
+                                    <option value="0" selected>请选择审稿人</option>
+                                    <option th:each="reviewer : ${reviewerList}" th:value="${reviewer.id}" th:text="${reviewer.name}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="close1" name="close1" class="btn btn-default"
+                                    data-dismiss="modal"><span class="glyphicon glyphicon-remove"
+                                                               aria-hidden="true"></span>关闭
+                            </button>
+                            <button type="button" id="btn_submit1" class="btn btn-primary"><span
+                                    class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>提交
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!------- 尾部Footer ------>
+    <div th:replace="admin/AdminLTEdemo::main_footer"></div>
+
+    <!------------------------------------右侧设置按钮的侧边栏 ------------------------------------>
+    <div th:replace="admin/AdminLTEdemo::control_sidebar"></div>
+    <!-- /.control-sidebar -->
+    <!-- 添加侧边栏的背景。这个 div必须放在 control-sidebar 之后 -->
+    <div class="control-sidebar-bg"></div>
+</div>
+
+<!--------------------------- 导入的 JS SCRIPTS ------------------------>
+<!-- jQuery 3 -->
+<script th:src="@{/adminLTE/bower_components/jquery/dist/jquery.min.js}"
+        src="/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js}"
+        src="/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/adminLTE/dist/js/adminlte.min.js}" src="/adminLTE/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script th:src="@{/adminLTE/dist/js/demo.js}" src="/adminLTE/dist/js/demo.js"></script>
+<!-- date-range-picker -->
+<script th:src="@{/adminLTE/bower_components/moment/min/moment.min.js}"></script>
+<script th:src="@{/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js}"></script>
+<!-- bootstrap datepicker -->
+<script th:src="@{/adminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js}"></script>
+<!-- bootstrap time picker -->
+<script th:src="@{/adminLTE/plugins/timepicker/bootstrap-timepicker.min.js}"></script>
+
+<!-- layui -->
+<script th:src="@{/layui/layui.js}" src="/layui/layui.js"></script>
+<!-- DataTables -->
+<script th:src="@{/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js}" src="/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}" src="/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- jquery-confirm jquery-form-->
+<script th:src="@{/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.js}" src="/adminLTE/plugins/jqueryComfirm/jquery-confirm.min.js "></script>
+<script th:src="@{/adminLTE/plugins/jqueryComfirm/jquery-form.min.js}" src="/adminLTE/plugins/jqueryComfirm/jquery-form.min.js"></script>
+
+<script th:src="@{/js/reviewer.js}"></script>
+
+<script>
+    $(function () {
+        //Date range picker with time picker
+        $('#date_start_end1').daterangepicker({ timePicker: true, timePicker24Hour: true, timePickerIncrement: 30, locale: { format: 'YYYY-MM-DD HH:mm:ss', separator: "/" }})
+        $('#date_start_end2').daterangepicker({ timePicker: true, timePicker24Hour: true, timePickerIncrement: 30, autoUpdateInput: false, locale: { format: 'YYYY-MM-DD HH:mm:ss', separator: "/" }})
+    })
+</script>
+
+<script th:inline="javascript" type="text/javascript" rel="script">
+    let announcerInfo = [[${announcerInfo}]];
+    let paperTitle = [[${paperTitle}]];
+</script>
+
+<script>
+    /*数据表格脚本*/
+    $(function () {
+        if ("[[${conferenceName}]]" === "")
+            $("#stype").val("0");
+        else
+            $("#stype").find("option:contains('[[${conferenceName}]]')").attr("selected",true);
+        $('#svalue').attr("value", paperTitle);
+        layui.use(['laypage', 'element', 'layer'], function () {
+            var element = layui.element;
+            var laypage = layui.laypage,
+                layer = layui.layer;
+            //完整功能
+            laypage.render({
+                elem: 'pagehelp',
+                count: [[${paperPageInfo.total}]], //总数据条数
+                limit: [[${paperPageInfo.pageSize}]], //每页显示多少条数据
+                limits: [3,5,10,20,30],
+                curr: [[${paperPageInfo.pageNum}]], //当前第页码
+                theme: '#1E9FFF', //颜色主题
+                first: "首页",
+                last: "尾页",
+                layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'], //分页插件控件
+                jump: function (obj, first) {
+                    //首次不执行
+                    if (!first) {
+                        var conferenceName = $("#stype option:selected").text();
+                        var paperTitle = $("#svalue").val();
+                        location.href = "/admin/paper_manage_undistri?pageNum=" + obj.curr + "&&pageSize=" + obj.limit + "&paperTitle=" + paperTitle + "&conferenceName=" + conferenceName
+                    }
+                }
+            });
+        });
+    })
+
+    // 搜索会议标题
+    function search() {
+        var conferenceName = $("#stype option:selected").text();
+        var paperTitle = $("#svalue").val();
+        location.href = "/admin/paper_manage_undistri?conferenceName=" + conferenceName + "&paperTitle=" + paperTitle
+    }
+
+    /*加载分配审稿人弹框*/
+    function clickDistribute(paper_id) {
+        $.getJSON("[[@{/admin/queryPaper}]]", "paper_id=" + paper_id, function (data) {
+            $('#id').attr("value", data.id);
+            $('#conference_id').attr("value", data.confer_id);
+            $('#title').attr("value", data.title);
+            $('#abstract').text(data.paper_abstract);
+            $("#addModalLabel").text("分配审稿人");
+            $('#addModal').modal();
+        })
+        //$("#addModalLabel").text("分配审稿人");
+        //$('#addModal').modal();
+    }
+    /*点击关闭模态框后重载页面*/
+    $("#close1,#close2").click(function () {
+        window.location.reload();
+    });
+    $("#refresh").click(function () {
+        location.href = "/admin/conference_manage"
+    });
+    /*点击添加用户模态框的提交按钮*/
+    $('#btn_submit1').on('click', function () {
+        var paper_id = $("#id").val();
+        var conference_id = $("#conference_id").val();
+        var reviewer1_id = $("#reviewer1 option:selected").val();
+        var reviewer2_id = $("#reviewer2 option:selected").val();
+        var reviewer3_id = $("#reviewer3 option:selected").val();
+        // 如果未选择审稿人
+        if (reviewer1_id == 0 || reviewer2_id == 0 || reviewer3_id == 0) {
+            $.alert({
+                title: '提示信息',
+                content: '请选择三位审稿人!',
+                buttons: {
+                    确定: function () {
+                        $("#reviewer1").focus();
+                    }
+                },
+
+            });
+            return;
+        }
+        // 如果审稿人选择有重复
+        else if (reviewer1_id == reviewer2_id || reviewer1_id == reviewer3_id || reviewer2_id == reviewer3_id) {
+            $.alert({
+                title: '提示信息',
+                content: '审稿人重复选择!',
+                buttons: {
+                    确定: function () {
+                        $("#reviewer1").focus();
+                    }
+                },
+            });
+            return;
+        }
+        $.confirm({
+            title: '提交提示',
+            content: '确认要提交吗？',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            // opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: '确定',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        //layer.load();
+                        $.ajax({
+                            url: "[[@{/admin/createPaperDistri}]]",
+                            //secureuri : false,
+                            dataType: 'json',//此时指定的是后台需要返回json字符串,前端自己解析,可以注释掉.后台直接返回map
+                            data: {
+                                paper_id: paper_id,
+                                reviewer1_id: reviewer1_id,
+                                reviewer2_id: reviewer2_id,
+                                reviewer3_id: reviewer3_id,
+                                confer_id: conference_id
+                            },
+                            success: function (data, status) {
+                                var arr = data.msg;
+                                if (arr == "1") {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '分配成功!',
+                                        buttons: {
+                                            确定: function () {
+                                                window.location.reload();
+                                            }
+                                        },
+                                    });
+                                } else {
+                                    $.alert({
+                                        title: '提示信息',
+                                        content: '分配失败!',
+                                        buttons: {
+                                            确定: function () {
+                                            }
+                                        },
+                                    });
+
+                                }
+                            },
+                            error: function (data, status, e) {
+                                $.alert({
+                                    title: '提示信息',
+                                    content: '分配失败!',
+                                    buttons: {
+                                        确定: function () {
+                                        }
+                                    },
+                                });
+                            }
+                        });
+
+                    },
+                },
+                取消: function () {
+                    //$.alert('你点击了<strong>取消</strong>');
+                }
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>
